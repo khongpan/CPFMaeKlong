@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">CPF-MaeKlong</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="type" >
+        <item>Pond A</item>
+        <item>Pond B</item>
+    </string-array>
+    <string name="title_activity_graph">GraphActivity</string>
+    <string name="hello_world">Hello world!</string>
+</resources>
