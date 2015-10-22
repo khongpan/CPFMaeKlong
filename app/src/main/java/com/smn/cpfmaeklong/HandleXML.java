@@ -10,8 +10,8 @@ import java.net.URL;
 public class HandleXML {
     private String LastValue = "-";
     private String LastIODateTime = "-";
-    private String[] Message =new String[99999];
-    private String[] NodeDateTime =new String[99999];
+    private String[] Message =new String[10000];
+    private String[] NodeDateTime =new String[10000];
     int countRecord = 0,index = -1,index2 = -1;
     private String urlString = null;
     private String[] ValueY = new String[300] ;

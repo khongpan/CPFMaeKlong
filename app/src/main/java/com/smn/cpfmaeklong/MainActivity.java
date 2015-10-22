@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -506,38 +507,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showgrid() {
-        ListView lv;
-        TextView dt;
-
+        final ListView lv;
+        final TextView dt;
+        final EditText keysch;
+        final Button sch;
+        final int[] index = new int[1];
         String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&syslog=POND-CONTROL";
-        HandleXML obj;
+        final HandleXML objs;
 
         String today = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         String finalUrl = url + ",4096," + today + ",NodeDateTime"; //"2015-10-02"
-        obj = new HandleXML(finalUrl);
-        obj.fetchXML();
-        while (obj.parsingComplete) ;
+        objs = new HandleXML(finalUrl);
+        objs.fetchXML();
+        while (objs.parsingComplete) ;
 
-        if(obj.getCountRecord()==0){
+        if(objs.getCountRecord()==0){
             Toast.makeText(this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
         }else {
-            String[] time = new String[obj.getCountRecord()];
-            String[] data = new String[obj.getCountRecord()];
+            final String[] time = new String[objs.getCountRecord()];
+            final String[] data = new String[objs.getCountRecord()];
 
-            for (int i = 0; i < obj.getCountRecord(); i++) {
-                time[i] = obj.NodeDateTime();
-                data[i] = obj.Message();
+            for (int i = 0; i < objs.getCountRecord(); i++) {
+                time[i] = objs.NodeDateTime();
+                data[i] = objs.Message();
             }
-
-            dt = (TextView) findViewById(R.id.txtDate);
+            keysch = (EditText) findViewById(R.id.tvsch);
+            sch = (Button) findViewById(R.id.btsch);
+            dt = (TextView) findViewById(R.id.date2);
             lv = (ListView) findViewById(R.id.listView);
             dt.setText(time[0].substring(0, 10));
 
             final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
             HashMap<String, String> map;
 
-            for (int j = 0; j < obj.getCountRecord(); j++) {
+            for (int j = 0; j < objs.getCountRecord(); j++) {
                 map = new HashMap<>();
                 map.put("DATE", time[j].substring(11));
                 map.put("DATA", data[j]);
@@ -547,6 +551,29 @@ public class MainActivity extends AppCompatActivity {
             sAdap = new SimpleAdapter(MainActivity.this, MyArrList, R.layout.activity_column,
                     new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
             lv.setAdapter(sAdap);
+
+            sch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<HashMap<String, String>>();
+                    HashMap<String, String> map;
+                    for (int k = 0; k < objs.getCountRecord(); k++) {
+                        index[0] = data[k].indexOf(keysch.getText().toString());
+                        if (index[0] < 0) {
+                        } else {
+                            map = new HashMap<String, String>();
+                            map.put("DATE", time[k].substring(11));
+                            map.put("DATA", data[k]);
+                            MyArrList.add(map);
+                        }
+                    }
+
+                    SimpleAdapter sAdap;
+                    sAdap = new SimpleAdapter(MainActivity.this, MyArrList, R.layout.activity_column,
+                            new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
+                    lv.setAdapter(sAdap);
+                }
+            });
         }
     }
 }
