@@ -541,7 +541,7 @@ public class MainActivity extends AppCompatActivity {
             final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
             HashMap<String, String> map;
 
-            for (int j = 0; j < objs.getCountRecord(); j++) {
+            for (int j = objs.getCountRecord()-1; j >=0; j--) {
                 map = new HashMap<>();
                 map.put("DATE", time[j].substring(11));
                 map.put("DATA", data[j]);
@@ -551,13 +551,13 @@ public class MainActivity extends AppCompatActivity {
             sAdap = new SimpleAdapter(MainActivity.this, MyArrList, R.layout.activity_column,
                     new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
             lv.setAdapter(sAdap);
-
+//------------------------------------------------------------------------------------------------//
             sch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<HashMap<String, String>>();
                     HashMap<String, String> map;
-                    for (int k = 0; k < objs.getCountRecord(); k++) {
+                    for (int k = objs.getCountRecord()-1; k >=0; k--) {
                         index[0] = data[k].indexOf(keysch.getText().toString());
                         if (index[0] < 0) {
                         } else {
@@ -567,7 +567,6 @@ public class MainActivity extends AppCompatActivity {
                             MyArrList.add(map);
                         }
                     }
-
                     SimpleAdapter sAdap;
                     sAdap = new SimpleAdapter(MainActivity.this, MyArrList, R.layout.activity_column,
                             new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
@@ -575,5 +574,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
     }
 }
