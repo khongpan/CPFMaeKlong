@@ -12,19 +12,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-
-import static com.smn.cpfmaeklong.R.layout.activity_column;
 
 public class MainActivity extends AppCompatActivity {
     Date date = new Date();
@@ -504,77 +496,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LaunchGrid(View view) {
-        setContentView(R.layout.activity_grid);
-        showgrid();
-    }
-
-   private void showgrid() {
-        final ListView lv;
-        final TextView dt;
-        final EditText keysch;
-        final Button sch;
-        final int[] index = new int[1];
-        String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&syslog=POND-CONTROL";
-        final HandleXML objs;
-
-        String today = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-        String finalUrl = url + ",4096," + today + ",NodeDateTime"; //"2015-10-02"
-        objs = new HandleXML(finalUrl);
-        objs.fetchXML();
-        while (objs.parsingComplete) ;
-
-        if(objs.getCountRecord()==0){
-            Toast.makeText(this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
-        }else {
-            final String[] time = new String[objs.getCountRecord()];
-            final String[] data = new String[objs.getCountRecord()];
-
-            for (int i = 0; i < objs.getCountRecord(); i++) {
-                time[i] = objs.NodeDateTime();
-                data[i] = objs.Message();
-            }
-            keysch = (EditText) findViewById(R.id.tvsch);
-            sch = (Button) findViewById(R.id.btsch);
-            dt = (TextView) findViewById(R.id.date2);
-            lv = (ListView) findViewById(R.id.listView);
-            dt.setText(time[0].substring(0, 10));
-
-            final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
-            HashMap<String, String> map;
-
-            for (int j = objs.getCountRecord()-1; j >=0; j--) {
-                map = new HashMap<>();
-                map.put("DATE", time[j].substring(11));
-                map.put("DATA", data[j]);
-                MyArrList.add(map);
-            }
-            SimpleAdapter sAdap;
-            sAdap = new SimpleAdapter(MainActivity.this, MyArrList, activity_column,
-                    new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
-            lv.setAdapter(sAdap);
-//------------------------------------------------------------------------------------------------//
-            sch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
-                    HashMap<String, String> map;
-                    for (int k = objs.getCountRecord()-1; k >=0; k--) {
-                        index[0] = data[k].indexOf(keysch.getText().toString());
-                        if (index[0] >= 0) {
-                            map = new HashMap<>();
-                            map.put("DATE", time[k].substring(11));
-                            map.put("DATA", data[k]);
-                            MyArrList.add(map);
-                        }
-                    }
-                    SimpleAdapter sAdap;
-                    sAdap = new SimpleAdapter(MainActivity.this, MyArrList, activity_column,
-                            new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
-                    lv.setAdapter(sAdap);
-                }
-            });
-        }
-
+        String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
+        String message = "hello world \r\n";
+        Intent intent = new Intent(this, GridActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 }

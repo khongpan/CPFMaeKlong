@@ -28,6 +28,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.smn.cpfmaeklong.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".GridActivity"
+            android:label="@string/title_activity_grid"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.smn.cpfmaeklong.MainActivity" />
+        </activity>
+
     </application>
 
 </manifest>
