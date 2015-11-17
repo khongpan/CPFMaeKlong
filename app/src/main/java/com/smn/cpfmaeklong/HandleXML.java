@@ -55,20 +55,26 @@ public class HandleXML {
                         text = myParser.getText();
                         break;
                     case XmlPullParser.END_TAG:
-                        if (name.equals("LastValue")) {
-                            LastValue = text;
-                        } else if (name.equals("LastIODateTime")) {
-                            LastIODateTime = text;
-                        } else if (name.equals("Value")) {
-                            ValueY[i] = text;
-                            i++;
-                            countRecord = countRecord + 1;
-                        }else if(name.equals("NodeDateTime")){
-                            NodeDateTime[i] = text;
-                        }else if(name.equals("Message")){
-                            Message[i] = text;
-                            i++;
-                            countRecord++;
+                        switch (name) {
+                            case "LastValue":
+                                LastValue = text;
+                                break;
+                            case "LastIODateTime":
+                                LastIODateTime = text;
+                                break;
+                            case "Value":
+                                ValueY[i] = text;
+                                i++;
+                                countRecord = countRecord + 1;
+                                break;
+                            case "NodeDateTime":
+                                NodeDateTime[i] = text;
+                                break;
+                            case "Message":
+                                Message[i] = text;
+                                i++;
+                                countRecord++;
+                                break;
                         }
                         break;
                 }

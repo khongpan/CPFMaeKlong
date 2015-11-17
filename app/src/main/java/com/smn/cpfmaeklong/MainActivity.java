@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import static com.smn.cpfmaeklong.R.layout.activity_column;
+
 public class MainActivity extends AppCompatActivity {
     Date date = new Date();
     Button bt,bt2,bt3;
@@ -506,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
         showgrid();
     }
 
-    private void showgrid() {
+   private void showgrid() {
         final ListView lv;
         final TextView dt;
         final EditText keysch;
@@ -548,27 +550,26 @@ public class MainActivity extends AppCompatActivity {
                 MyArrList.add(map);
             }
             SimpleAdapter sAdap;
-            sAdap = new SimpleAdapter(MainActivity.this, MyArrList, R.layout.activity_column,
+            sAdap = new SimpleAdapter(MainActivity.this, MyArrList, activity_column,
                     new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
             lv.setAdapter(sAdap);
 //------------------------------------------------------------------------------------------------//
             sch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<HashMap<String, String>>();
+                    final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
                     HashMap<String, String> map;
                     for (int k = objs.getCountRecord()-1; k >=0; k--) {
                         index[0] = data[k].indexOf(keysch.getText().toString());
-                        if (index[0] < 0) {
-                        } else {
-                            map = new HashMap<String, String>();
+                        if (index[0] >= 0) {
+                            map = new HashMap<>();
                             map.put("DATE", time[k].substring(11));
                             map.put("DATA", data[k]);
                             MyArrList.add(map);
                         }
                     }
                     SimpleAdapter sAdap;
-                    sAdap = new SimpleAdapter(MainActivity.this, MyArrList, R.layout.activity_column,
+                    sAdap = new SimpleAdapter(MainActivity.this, MyArrList, activity_column,
                             new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
                     lv.setAdapter(sAdap);
                 }

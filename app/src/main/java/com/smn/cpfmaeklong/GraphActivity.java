@@ -125,9 +125,10 @@ public class GraphActivity extends AppCompatActivity {
                 break;
             }
             case MotionEvent.ACTION_UP:{
-                if(oldXAxis<newXAxis){
+                if(oldXAxis<newXAxis) {
                     date.setDate(date.getDate() - 1);
-                }else if(oldXAxis>newXAxis){
+                }
+                else if(oldXAxis>newXAxis){
                     date.setDate(date.getDate() + 1);
                 }
                 if(chkdate.equals(date)){
