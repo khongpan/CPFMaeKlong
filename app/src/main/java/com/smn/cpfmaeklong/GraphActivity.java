@@ -75,7 +75,7 @@ public class GraphActivity extends AppCompatActivity {
             for (int i = 0; i < ValueY.length; i++) {
                 data[i] = new GraphView.GraphViewData(i, ValueY[i]);
             }
-            GraphViewSeries seriesA = new GraphViewSeries("M", new GraphViewSeries.GraphViewSeriesStyle(Color.RED, 2), data);
+            GraphViewSeries seriesA = new GraphViewSeries("DO", new GraphViewSeries.GraphViewSeriesStyle(Color.RED, 2), data);
             graphView.addSeries(seriesA);
         }
         {
@@ -92,7 +92,7 @@ public class GraphActivity extends AppCompatActivity {
             for (int i = 0; i < ValueY.length; i++) {
                 data[i] = new GraphView.GraphViewData(i, ValueY[i]);
             }
-            GraphViewSeries seriesA = new GraphViewSeries("DO", new GraphViewSeries.GraphViewSeriesStyle(Color.BLUE, 2), data);
+            GraphViewSeries seriesA = new GraphViewSeries("Aerator", new GraphViewSeries.GraphViewSeriesStyle(Color.BLUE, 2), data);
             graphView.addSeries(seriesA);
         }
 
