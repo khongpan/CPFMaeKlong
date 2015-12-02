@@ -53,7 +53,9 @@
         android:textSize="12dp"
         android:textIsSelectable="false"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/btsch"
+        android:hint="enter search text here" />
 
     <Button
         android:layout_width="50dp"
@@ -69,8 +71,8 @@
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:text="Back"
+        android:layout_height="35dp"
+        android:text="&lt;"
         android:id="@+id/btBack"
         android:layout_below="@+id/btsch"
         android:layout_alignParentLeft="true"
@@ -79,8 +81,8 @@
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:text="Next"
+        android:layout_height="35dp"
+        android:text=">"
         android:id="@+id/btNext"
         android:layout_alignTop="@+id/btBack"
         android:layout_alignParentRight="true"
@@ -93,7 +95,8 @@
         android:text="Select Day"
         android:id="@+id/textView3"
         android:layout_alignTop="@+id/btBack"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/textView2" />
 
 
 </RelativeLayout>
