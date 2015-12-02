@@ -19,7 +19,6 @@ import android.widget.Toast;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    Date date = new Date();
     Button bt,bt2,bt3;
     TextView tv,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12;
     String url1,url2,url3,url4,url5,url6,url7,url8,url9,url10,url11,url12,url13,url14;
