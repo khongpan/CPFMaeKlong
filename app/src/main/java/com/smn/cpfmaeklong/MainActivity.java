@@ -19,12 +19,13 @@ import android.widget.Toast;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    Button bt,bt2,bt3;
+    Button bt,bt2,bt3,btUsableMotor;
     TextView tv,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12;
     String url1,url2,url3,url4,url5,url6,url7,url8,url9,url10,url11,url12,url13,url14;
     private String chk,mname;
     String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL,";
     HandleXML obj,obj2,obj3,obj4,obj5,obj6,obj7,obj8,obj9,obj10,obj11,obj12,obj13,obj14;
+    HandleXML xmlUsableMotorCount;
 
     private String[] strtype;
     private String typeChoosed;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         bt = (Button) findViewById(R.id.btnDOL);
         bt2 = (Button) findViewById(R.id.btnOMC);
         bt3 = (Button) findViewById(R.id.btnRefresh);
+        btUsableMotor = (Button) findViewById(R.id.btUsableAerator);
         tv = (TextView) findViewById(R.id.txtDate);
         m1 = (TextView) findViewById(R.id.btM1);
         m2 = (TextView) findViewById(R.id.btM2);
@@ -151,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
                     obj14 = new HandleXML(url14);
                     obj14.fetchXML();
 
+                    xmlUsableMotorCount = new HandleXML(url + "4096,1507");
+                    xmlUsableMotorCount.fetchXML();
+
 
                     while (obj.parsingComplete) ;
                     while (obj2.parsingComplete) ;
@@ -166,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                     while (obj12.parsingComplete) ;
                     while (obj13.parsingComplete) ;
                     while (obj14.parsingComplete) ;
+                    while (xmlUsableMotorCount.parsingComplete);
+
                     bt.setText(obj.getLastValue());
                     bt2.setText(obj2.getLastValue());
                     tv.setText(obj.getLastIODateTime());
@@ -190,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     m10.setText(obj12.getLastValue());
                     m11.setText(obj13.getLastValue());
                     m12.setText(obj14.getLastValue());
+                    btUsableMotor.setText(xmlUsableMotorCount.getLastValue());
 
                     chkmotor();
                 }
@@ -462,27 +470,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void chktoast(){
         if(chk == null) {
-            Toast.makeText(this,mname +  " State 0 Null", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 0 Null", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("1")) {
-            Toast.makeText(this,mname +  " State 1 Unknown", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 1 Unknown", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("2")) {
-            Toast.makeText(this,mname +  " State 2 Activate", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 2 Activate", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("3")) {
-            Toast.makeText(this,mname +  " State 3 On", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 3 On", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("4")) {
-            Toast.makeText(this,mname +  " State 4 Deactivate", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 4 Deactivate", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("5")) {
-            Toast.makeText(this,mname +  " State 5 Off", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 5 Off", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("6")) {
-            Toast.makeText(this,mname +  " State 6 OverCurrent", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 6 OverCurrent", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("7")) {
-            Toast.makeText(this,mname +  " State 7 UnderCurrent", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 7 UnderCurrent", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("8")) {
-            Toast.makeText(this,mname +  " State 8 InternalError", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 8 InternalError", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("9")) {
-            Toast.makeText(this,mname +  " State 9 CommError", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 9 CommError", Toast.LENGTH_SHORT).show();
         }else if(chk.equals("10")) {
-            Toast.makeText(this,mname +  " State 10 LastState", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,mname +  " State 10 LastState", Toast.LENGTH_SHORT).show();
         }
     }
 
