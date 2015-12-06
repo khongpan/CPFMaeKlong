@@ -1,16 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_height="wrap_content">
             <Spinner
                 android:layout_width="120dp"
                 android:layout_height="40dp"
@@ -71,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="On/Usable Aerator :"
+                android:text="On/Max Aerator :"
                 android:id="@+id/txtOMC"
                 android:layout_below="@+id/btnDOL"
                 android:layout_alignLeft="@+id/txtDOL"
@@ -265,6 +259,5 @@
                 android:layout_alignLeft="@+id/btnRefresh"
                 android:layout_alignStart="@+id/btnRefresh" />
         </RelativeLayout>
-    </ScrollView>
 
-</RelativeLayout>
+</ScrollView>
