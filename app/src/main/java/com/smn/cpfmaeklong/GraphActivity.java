@@ -9,8 +9,11 @@ import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
+import com.jjoe64.graphview.LegendRenderer;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,6 +25,7 @@ public class GraphActivity extends AppCompatActivity {
     float oldYAxis = 0f;
     float newXAxis = 0f;
     float newYAxis = 0f;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +62,15 @@ public class GraphActivity extends AppCompatActivity {
         HandleXML obj;
 
         String today = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        String Showday = new SimpleDateFormat("dd-MM-yyyy").format(date);
-        GraphView graphView = new LineGraphView(this, Showday);
+        //String Showday = new SimpleDateFormat("dd-MM-yyyy").format(date);
+        //GraphView graphView = new LineGraphView(this, Showday);
 
-        setContentView(R.layout.activity_graph);{
+        GraphView graphView = new GraphView(this);
+        LineGraphSeries<DataPoint> seriesA = new LineGraphSeries();
+        LineGraphSeries<DataPoint> seriesB = new LineGraphSeries();
+
+        setContentView(R.layout.activity_graph);
+        {
             String finalUrl = url + "4096,1505,"+ today;
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
@@ -70,13 +79,14 @@ public class GraphActivity extends AppCompatActivity {
             for (int i = 0; i < obj.getCountRecord(); i++) {
                 String str = obj.getValue();
                 ValueY[i] = Float.parseFloat(str);
+                seriesA.appendData(new DataPoint(i,ValueY[i]),true,288*2);
             }
-            GraphView.GraphViewData[] data = new GraphView.GraphViewData[ValueY.length];
-            for (int i = 0; i < ValueY.length; i++) {
-                data[i] = new GraphView.GraphViewData(i, ValueY[i]);
-            }
-            GraphViewSeries seriesA = new GraphViewSeries("DO", new GraphViewSeries.GraphViewSeriesStyle(Color.RED, 2), data);
-            graphView.addSeries(seriesA);
+            //GraphView.GraphViewData[] data = new GraphView.GraphViewData[ValueY.length];
+            //for (int i = 0; i < ValueY.length; i++) {
+            //    data[i] = new GraphView.GraphViewData(i, ValueY[i]);
+            //}
+            //GraphViewSeries seriesA = new GraphViewSeries("DO", new GraphViewSeries.GraphViewSeriesStyle(Color.RED, 2), data);
+                graphView.addSeries(seriesA);
         }
         {
             String finalUrl = url + "4096,1506,"+ today;
@@ -87,23 +97,45 @@ public class GraphActivity extends AppCompatActivity {
             for (int i = 0; i < obj.getCountRecord(); i++) {
                 String str = obj.getValue();
                 ValueY[i] = Float.parseFloat(str);
+                seriesB.appendData(new DataPoint(i,ValueY[i]),true,288*2);
             }
-            GraphView.GraphViewData[] data = new GraphView.GraphViewData[ValueY.length];
-            for (int i = 0; i < ValueY.length; i++) {
-                data[i] = new GraphView.GraphViewData(i, ValueY[i]);
-            }
-            GraphViewSeries seriesA = new GraphViewSeries("Aerator", new GraphViewSeries.GraphViewSeriesStyle(Color.BLUE, 2), data);
-            graphView.addSeries(seriesA);
+            //GraphView.GraphViewData[] data = new GraphView.GraphViewData[ValueY.length];
+            //for (int i = 0; i < ValueY.length; i++) {
+            //    data[i] = new GraphView.GraphViewData(i, ValueY[i]);
+            //}
+            //GraphViewSeries seriesA = new GraphViewSeries("Aerator", new GraphViewSeries.GraphViewSeriesStyle(Color.BLUE, 2), data);
+            graphView.addSeries(seriesB);
         }
 
-        graphView.setShowLegend(true);
+
+        {
+           StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
+           staticLabelsFormatter.setHorizontalLabels(new String[] {"","","","03","","","06","","","09","","","12","","","15","","","18","","","21","","",""});
+           staticLabelsFormatter.setVerticalLabels(new String[] {"","","","","","5","","","","","10","","","","","15",""});
+           graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        }
+
+        seriesA.setTitle("DO");
+        seriesA.setColor(Color.BLUE);
+        seriesA.setThickness(2);
+        seriesB.setTitle("Aerator");
+        seriesB.setColor(Color.RED);
+        seriesB.setThickness(2);
+        graphView.getLegendRenderer().setVisible(true);
+        graphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
+        graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+        graphView.getViewport().setXAxisBoundsManual(true);
+        graphView.getViewport().setMinX(0);
+        graphView.getViewport().setMaxX(288);
+
+// set manual Y bounds
+        graphView.getViewport().setYAxisBoundsManual(true);
+        graphView.getViewport().setMinY(0);
+        graphView.getViewport().setMaxY(16);
+
+        graphView.getViewport().setScrollable(false);
         LinearLayout layout = (LinearLayout) findViewById(R.id.graph_area);
-        graphView.setHorizontalLabels(new String[]{
-                "","","","03","","","06","","","09","","","12","","","15","","","18","","","21","","",""
-        });
-        graphView.setManualYAxisBounds(15, 0);
-        graphView.setVerticalLabels(new String[]{"15","","","","","10","","","","","5","","","","","0"});
-        graphView.setViewPort(0, 288);
         layout.addView(graphView);
     }
 
