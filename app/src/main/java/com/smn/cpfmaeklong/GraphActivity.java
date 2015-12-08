@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -28,12 +29,13 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class GraphActivity extends AppCompatActivity {
     Date date = new Date();
-    Date chkdate = new Date();
+    Date today = new Date();
     float oldXAxis = 0f;
     float oldYAxis = 0f;
     float newXAxis = 0f;
     float newYAxis = 0f;
     Button btNextDay,btPrevDay;
+    TextView txtGraphDate;
 
     GraphView graphView;
     LineGraphSeries<DataPoint> seriesA ;
@@ -56,6 +58,8 @@ public class GraphActivity extends AppCompatActivity {
         btNextDay = (Button) findViewById(R.id.bt_next_day);
         btPrevDay = (Button) findViewById(R.id.bt_prev_day);
 
+        txtGraphDate = (TextView) findViewById(R.id.txt_graph_date);
+
         graphView.getLegendRenderer().setVisible(true);
         graphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
         graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
@@ -76,7 +80,7 @@ public class GraphActivity extends AppCompatActivity {
 
         {
             StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
-            //staticLabelsFormatter.setHorizontalLabels(new String[] {"","","","03","","","06","","","09","","","12","","","15","","","18","","","21","","",""});
+            staticLabelsFormatter.setHorizontalLabels(new String[] {"","","","03","","","06","","","09","","","12","","","15","","","18","","","21","","",""});
             staticLabelsFormatter.setVerticalLabels(new String[] {"","","","","","5","","","","","10","","","","","15",""});
             graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         }
@@ -91,8 +95,9 @@ public class GraphActivity extends AppCompatActivity {
         btNextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String txt = "";
-                date.setDate(date.getDate() + 1);
+                if (date.before(today)) {
+                    date.setDate(date.getDate() + 1);
+                }
 
                 ShowGraph();
             }
@@ -136,7 +141,7 @@ public class GraphActivity extends AppCompatActivity {
         String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL,";
         HandleXML obj;
 
-        String today = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        String strDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
         //String Showday = new SimpleDateFormat("dd-MM-yyyy").format(date);
         //GraphView graphView = new LineGraphView(this, Showday);
 
@@ -144,11 +149,11 @@ public class GraphActivity extends AppCompatActivity {
         //LineGraphSeries<DataPoint> seriesA = new LineGraphSeries();
         //LineGraphSeries<DataPoint> seriesB = new LineGraphSeries();
 
-
+        txtGraphDate.setText(strDay);
 
         //setContentView(R.layout.activity_graph);
         {
-            String finalUrl = url + "4096,1505,"+ today;
+            String finalUrl = url + "4096,1505,"+ strDay;
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
             while (obj.parsingComplete) ;
@@ -171,7 +176,7 @@ public class GraphActivity extends AppCompatActivity {
                 //graphView.addSeries(seriesA);
         }
         {
-            String finalUrl = url + "4096,1506,"+ today;
+            String finalUrl = url + "4096,1506,"+ strDay;
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
             while (obj.parsingComplete) ;
@@ -221,17 +226,7 @@ public class GraphActivity extends AppCompatActivity {
 
 
 
-    public void onNextDay(){
 
-        date.setDate(date.getDate() + 1);
-        ShowGraph();
-    }
-
-    public void onPrevDay(){
-
-        date.setDate(date.getDate() - 1);
-        ShowGraph();
-    }
  /*
     @Override
     public boolean onTouchEvent(MotionEvent ev){
