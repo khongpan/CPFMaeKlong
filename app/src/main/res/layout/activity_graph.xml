@@ -6,18 +6,31 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.smn.cpfmaeklong.GraphActivity">
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prev Day"
+        android:id="@+id/bt_prev_day" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEXT DAY"
+        android:id="@+id/bt_next_day"
+        android:layout_above="@+id/graph_area"
+        android:layout_alignRight="@+id/graph_area"
+        android:layout_alignEnd="@+id/graph_area" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/graph_area">
+        android:id="@+id/graph_area"
+        android:layout_below="@+id/bt_prev_day">
 
     </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></FrameLayout>
 
 </RelativeLayout>
