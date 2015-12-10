@@ -157,21 +157,21 @@ public class MainActivity extends AppCompatActivity {
                     xmlUsableMotorCount.fetchXML();
 
 
-                    while (obj.parsingComplete) ;
-                    while (obj2.parsingComplete) ;
-                    while (obj3.parsingComplete) ;
-                    while (obj4.parsingComplete) ;
-                    while (obj5.parsingComplete) ;
-                    while (obj6.parsingComplete) ;
-                    while (obj7.parsingComplete) ;
-                    while (obj8.parsingComplete) ;
-                    while (obj9.parsingComplete) ;
-                    while (obj10.parsingComplete) ;
-                    while (obj11.parsingComplete) ;
-                    while (obj12.parsingComplete) ;
-                    while (obj13.parsingComplete) ;
-                    while (obj14.parsingComplete) ;
-                    while (xmlUsableMotorCount.parsingComplete);
+                    while (!obj.parsingComplete) ;
+                    while (!obj2.parsingComplete) ;
+                    while (!obj3.parsingComplete) ;
+                    while (!obj4.parsingComplete) ;
+                    while (!obj5.parsingComplete) ;
+                    while (!obj6.parsingComplete) ;
+                    while (!obj7.parsingComplete) ;
+                    while (!obj8.parsingComplete) ;
+                    while (!obj9.parsingComplete) ;
+                    while (!obj10.parsingComplete) ;
+                    while (!obj11.parsingComplete) ;
+                    while (!obj12.parsingComplete) ;
+                    while (!obj13.parsingComplete) ;
+                    while (!obj14.parsingComplete) ;
+                    while (!xmlUsableMotorCount.parsingComplete);
 
                     bt.setText(obj.getLastValue());
                     bt2.setText(obj2.getLastValue());
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                         url1 = url + "8192,100";
                         obj = new HandleXML(url1);
                         obj.fetchXML();
-                        while (obj.parsingComplete) ;
+                        while (!obj.parsingComplete) ;
 
                         bt.setText(obj.getLastValue());
                         tv.setText(obj.getLastIODateTime());
@@ -345,12 +345,12 @@ public class MainActivity extends AppCompatActivity {
             m1.setBackgroundColor(Color.RED);
             m1.setText("1");
         }
-
         if (m2.getText().equals("3")) {
             m2.setBackgroundColor(Color.argb(255, 0, 150, 0));
             m2.setText("2");
         } else if (m2.getText().equals("5")) {
             m2.setBackgroundColor(Color.BLACK);
+            if (obj4.getNote().equals("must_off")) m2.setBackgroundColor(Color.argb(64,64,64,0));
             m2.setText("2");
         } else {
             m2.setBackgroundColor(Color.RED);
