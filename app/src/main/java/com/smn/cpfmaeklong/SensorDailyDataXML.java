@@ -1,5 +1,9 @@
 package com.smn.cpfmaeklong;
 
+/**
+ * Created by Mink on 12/10/2015.
+ */
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -7,47 +11,32 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HandleXML {
-    private String strName = " ";
-    private String strNote = " ";
-    private String LastValue = "-";
-    private String LastIODateTime = "-";
-    private String[] Message =new String[10000];
-    private String[] NodeDateTime =new String[10000];
-    int countRecord = 0,index = -1,index2 = -1;
-    private String urlString = null;
-    private String[] ValueY = new String[300] ;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class SensorDailyDataXML {
+    private String strURL=null;
+    private String[] strDateTime =new String[288];
+    private String[] strValue = new String[288];
+    private int iRecordCount;
+
     private XmlPullParserFactory xmlFactoryObject;
-    public volatile boolean parsingComplete = false;
-    public HandleXML(String url){
-        this.urlString = url;
+    public volatile boolean parsingComplete = true;
+
+
+    public SensorDailyDataXML(String url){
+        this.strURL = url;
     }
-    public String getLastValue(){
-        return LastValue;
-    }
-    public String getLastIODateTime(){
-        return LastIODateTime;
-    }
+
     public int getCountRecord (){
-        return countRecord;
+        return iRecordCount;
     }
 
-    public String getNote() {
-      return strNote;
-    }
-
-    public String getValue(){
-        index++;
-        return ValueY[index];
-    }
-    public String Message(){
-        index2++;
-        return Message[index2];
-    }
-    public String NodeDateTime(){
-        index++;
-        return NodeDateTime[index];
-    }
     public void parseXMLAndStoreIt(XmlPullParser myParser) {
         int event,i = 0;
         String text=null;
@@ -63,39 +52,20 @@ public class HandleXML {
                         break;
                     case XmlPullParser.END_TAG:
                         switch (name) {
-                            case "Name":
-                                String[] strResults = text.split("\\s");
-                                if (strResults.length>=1)
-                                    strName = new String(strResults[0]);
-                                if (strResults.length>=2)
-                                    strNote = new String(strResults[1]);
-
-                                break;
-                            case "LastValue":
-                                LastValue = text;
-                                break;
-                            case "LastIODateTime":
-                                LastIODateTime = text;
-                                break;
                             case "Value":
-                                ValueY[i] = text;
+                                strValue[i] = text;
                                 i++;
-                                countRecord = countRecord + 1;
+                                iRecordCount++;
                                 break;
                             case "NodeDateTime":
-                                NodeDateTime[i] = text;
-                                break;
-                            case "Message":
-                                Message[i] = text;
-                                i++;
-                                countRecord++;
+                                strDateTime[i] = text;
                                 break;
                         }
                         break;
                 }
                 event = myParser.next();
             }
-            parsingComplete = true;
+            parsingComplete = false;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -106,7 +76,7 @@ public class HandleXML {
             @Override
             public void run() {
                 try {
-                    URL url = new URL(urlString);
+                    URL url = new URL(strURL);
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                     conn.setReadTimeout(10000 /* milliseconds */);
                     conn.setConnectTimeout(15000 /* milliseconds */);

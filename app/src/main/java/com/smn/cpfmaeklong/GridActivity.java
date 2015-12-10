@@ -85,7 +85,7 @@ public class GridActivity extends AppCompatActivity {
         String finalUrl = url + ",4096," + today + ",NodeDateTime"; //"2015-10-02"
         objs = new HandleXML(finalUrl);
         objs.fetchXML();
-        while (objs.parsingComplete) ;
+        while (!objs.parsingComplete) ;
 
         if (objs.getCountRecord() == 0) {
             Toast.makeText(this, "No Data in Syslog.", Toast.LENGTH_LONG).show();

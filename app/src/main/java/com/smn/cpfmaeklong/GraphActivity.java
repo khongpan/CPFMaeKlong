@@ -29,7 +29,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 public class GraphActivity extends AppCompatActivity {
     Date date = new Date();
-    Date today = new Date();
+    //Date today = new Date();
     float oldXAxis = 0f;
     float oldYAxis = 0f;
     float newXAxis = 0f;
@@ -74,16 +74,13 @@ public class GraphActivity extends AppCompatActivity {
         graphView.getViewport().setMaxY(16);
 
         graphView.getViewport().setScrollable(true);
-        graphView.addSeries(seriesB);
-        graphView.addSeries(seriesA);
 
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
+        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
+        staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
+        graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
-        {
-            StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
-            staticLabelsFormatter.setHorizontalLabels(new String[] {"","","","03","","","06","","","09","","","12","","","15","","","18","","","21","","",""});
-            staticLabelsFormatter.setVerticalLabels(new String[] {"","","","","","5","","","","","10","","","","","15",""});
-            graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        }
+        ShowGraph();
 
         seriesA.setTitle("DO");
         seriesA.setColor(Color.BLUE);
@@ -92,13 +89,18 @@ public class GraphActivity extends AppCompatActivity {
         seriesB.setColor(Color.RED);
         seriesB.setThickness(2);
 
+        graphView.addSeries(seriesB);
+        graphView.addSeries(seriesA);
+
+
+
         btNextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Date today = new Date();
                 if (date.before(today)) {
                     date.setDate(date.getDate() + 1);
                 }
-
                 ShowGraph();
             }
         });
@@ -106,12 +108,13 @@ public class GraphActivity extends AppCompatActivity {
         btPrevDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Date today = new Date();
                 date.setDate(date.getDate() - 1);
                 ShowGraph();
             }
         });
 
-        ShowGraph();
+
 
     }
 
@@ -142,92 +145,45 @@ public class GraphActivity extends AppCompatActivity {
         HandleXML obj;
 
         String strDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        //String Showday = new SimpleDateFormat("dd-MM-yyyy").format(date);
-        //GraphView graphView = new LineGraphView(this, Showday);
-
-        //GraphView graphView = new GraphView(this);
-        //LineGraphSeries<DataPoint> seriesA = new LineGraphSeries();
-        //LineGraphSeries<DataPoint> seriesB = new LineGraphSeries();
 
         txtGraphDate.setText(strDay);
 
-        //setContentView(R.layout.activity_graph);
         {
             String finalUrl = url + "4096,1505,"+ strDay;
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
-            while (obj.parsingComplete) ;
-            //float[] ValueY = new float[obj.countRecord];
+            while (!obj.parsingComplete) ;
+
             DataPoint[] values = new DataPoint[obj.countRecord];
 
             for (int i = 0; i < obj.getCountRecord(); i++) {
                 String str = obj.getValue();
-                //ValueY[i] = Float.parseFloat(str);
+
                 values[i] = new DataPoint(i,Float.parseFloat(str));
 
-                //seriesA.appendData(new DataPoint(i, ValueY[i]), false, 288 * 2);
+
             }
             seriesA.resetData(values);
-            //GraphView.GraphViewData[] data = new GraphView.GraphViewData[ValueY.length];
-            //for (int i = 0; i < ValueY.length; i++) {
-            //    data[i] = new GraphView.GraphViewData(i, ValueY[i]);
-            //}
-            //GraphViewSeries seriesA = new GraphViewSeries("DO", new GraphViewSeries.GraphViewSeriesStyle(Color.RED, 2), data);
-                //graphView.addSeries(seriesA);
+
         }
         {
             String finalUrl = url + "4096,1506,"+ strDay;
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
-            while (obj.parsingComplete) ;
+            while (!obj.parsingComplete) ;
             DataPoint[] values = new DataPoint[obj.countRecord];
 
             for (int i = 0; i < obj.getCountRecord(); i++) {
                 String str = obj.getValue();
-                //ValueY[i] = Float.parseFloat(str);
                 values[i] = new DataPoint(i,Float.parseFloat(str));
-
-                //seriesB.appendData(new DataPoint(i, ValueY[i]), false, 288 * 2);
             }
             seriesB.resetData(values);
-            //GraphView.GraphViewData[] data = new GraphView.GraphViewData[ValueY.length];
-            //for (int i = 0; i < ValueY.length; i++) {
-            //    data[i] = new GraphView.GraphViewData(i, ValueY[i]);
-            //}
-            //GraphViewSeries seriesA = new GraphViewSeries("Aerator", new GraphViewSeries.GraphViewSeriesStyle(Color.BLUE, 2), data);
-            //graphView.addSeries(seriesB);
+
         }
-
-
-
-/*
-
-*/
-/*
-        graphView.getLegendRenderer().setVisible(true);
-        graphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
-        graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-
-        graphView.getViewport().setXAxisBoundsManual(true);
-        graphView.getViewport().setMinX(0);
-        graphView.getViewport().setMaxX(288);
-
-        // set manual Y bounds
-        graphView.getViewport().setYAxisBoundsManual(true);
-        graphView.getViewport().setMinY(0);
-        graphView.getViewport().setMaxY(16);
-*/
-
         graphView.getViewport().setScrollable(true);
-
-        //LinearLayout layout = (LinearLayout) findViewById(R.id.graph_area);
-        //layout.addView(graphView);
     }
 
 
-
-
- /*
     @Override
     public boolean onTouchEvent(MotionEvent ev){
         final int actionPeformed = ev.getAction();
@@ -253,13 +209,11 @@ public class GraphActivity extends AppCompatActivity {
                 else if(oldXAxis>newXAxis){
                     date.setDate(date.getDate() + 1);
                 }
-                if(chkdate.equals(date)){
-                    date.setDate(date.getDate() - 1);
-                }
+
                 ShowGraph();
                 break;}
         }
         return false;
     }
- */
+
 }
