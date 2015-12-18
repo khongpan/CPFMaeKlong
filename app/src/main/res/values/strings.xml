@@ -2,10 +2,15 @@
     <string name="app_name">CPF-MaeKlong</string>
     <string name="action_settings">Settings</string>
     <string-array name="type" >
-        <item>Pond A</item>
-        <item>Pond B</item>
+        <item>CPF Pond 5</item>
+        <item>CPF Pond 8</item>
+        <item>JRD Pond 19</item>
+        <item>EST-Pond 1</item>
+        <item>EST-Pond 2</item>
+        <item>EST-Pond 3</item>
+        <item>EST-Pond 4</item>
     </string-array>
-    <string name="title_activity_graph">GraphActivity</string>
-    <string name="title_activity_grid">GridActivity</string>
+    <string name="title_activity_graph">DailyGraph</string>
+    <string name="title_activity_grid">SysLog</string>
     <string name="hello_world">Hello world!</string>
 </resources>

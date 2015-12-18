@@ -1,5 +1,6 @@
 package com.smn.cpfmaeklong;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -40,12 +41,18 @@ public class GraphActivity extends AppCompatActivity {
     GraphView graphView;
     LineGraphSeries<DataPoint> seriesA ;
     LineGraphSeries<DataPoint> seriesB ;
+    String BaseURL;
+    int SelectedPond;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+
+        Intent intent = getIntent();
+        BaseURL = intent.getStringExtra("BASE_URL");
+        SelectedPond = intent.getIntExtra("SELECTED_POND", 0);
 
         //GraphView graphView = (GraphView) findViewById(R.id.graph_area);
         graphView = new GraphView(this);
@@ -63,6 +70,8 @@ public class GraphActivity extends AppCompatActivity {
         graphView.getLegendRenderer().setVisible(true);
         graphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
         graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+        graphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
 
         graphView.getViewport().setXAxisBoundsManual(true);
         graphView.getViewport().setMinX(0);
@@ -141,7 +150,8 @@ public class GraphActivity extends AppCompatActivity {
     }
 
     public void ShowGraph() {
-        String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL,";
+        //String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL,";
+        String url = BaseURL;
         HandleXML obj;
 
         String strDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -149,7 +159,11 @@ public class GraphActivity extends AppCompatActivity {
         txtGraphDate.setText(strDay);
 
         {
-            String finalUrl = url + "4096,1505,"+ strDay;
+            String finalUrl = url + ",4096,1505,"+ strDay;
+
+            if(SelectedPond==1){
+                finalUrl = url + ",8192,100,"+ strDay;
+            }
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
             while (!obj.parsingComplete) ;
@@ -167,7 +181,10 @@ public class GraphActivity extends AppCompatActivity {
 
         }
         {
-            String finalUrl = url + "4096,1506,"+ strDay;
+            String finalUrl = url + ",4096,1506,"+ strDay;
+            if(SelectedPond==1){
+                finalUrl = url + ",8192,100,"+ strDay;
+            }
             obj = new HandleXML(finalUrl);
             obj.fetchXML();
             while (!obj.parsingComplete) ;

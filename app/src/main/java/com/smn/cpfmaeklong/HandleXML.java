@@ -31,6 +31,8 @@ public class HandleXML {
     public int getCountRecord (){
         return countRecord;
     }
+    private int iRecordNum = 0;
+    private String strTemp;
 
     public String getNote() {
       return strNote;
@@ -57,6 +59,12 @@ public class HandleXML {
                 String name=myParser.getName();
                 switch (event) {
                     case XmlPullParser.START_TAG:
+                        if (name.equals("IO")) {
+                            strTemp = myParser.getAttributeValue(null, "Record");
+                            strTemp = strTemp+"";
+
+
+                        }
                         break;
                     case XmlPullParser.TEXT:
                         text = myParser.getText();
@@ -64,12 +72,15 @@ public class HandleXML {
                     case XmlPullParser.END_TAG:
                         switch (name) {
                             case "Name":
-                                String[] strResults = text.split("\\s");
-                                if (strResults.length>=1)
-                                    strName = new String(strResults[0]);
-                                if (strResults.length>=2)
-                                    strNote = new String(strResults[1]);
-
+                               // String[] strResults = text.split("\\s");
+                                //if (strResults.length>=1)
+                                //    strName = new String(strResults[0]);
+                                //if (strResults.length>=2)
+                                //    strNote = new String(strResults[1]);
+                                strName = text;
+                                break;
+                            case "Detail":
+                                strNote = text;
                                 break;
                             case "LastValue":
                                 LastValue = text;
@@ -90,6 +101,7 @@ public class HandleXML {
                                 i++;
                                 countRecord++;
                                 break;
+
                         }
                         break;
                 }

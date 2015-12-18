@@ -24,14 +24,22 @@ public class MainActivity extends AppCompatActivity {
     TextView[] m=new TextView[12+1];
     String url1,url2;
     String[] sMotorUrl= new String[12+1];
+    String sAvlMotorUrl;
     private String chk;
-    String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL,";
+    String[] BaseURL = {"http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=JRD-19",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-1",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-2",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-3",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-4",};
     HandleXML obj,obj2;
     HandleXML[] xmlMotor=new HandleXML[12+1];
     HandleXML xmlUsableMotorCount;
 
-    private String[] strtype;
-    private String typeChoosed;
+    private String[] strPondsName;
+    int SelectedPond;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,33 +96,45 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No Internet connection! Please connect to the Internet.", Toast.LENGTH_LONG).show();
         }else {
             Spinner spntype = (Spinner) findViewById(R.id.spnPond);
-            strtype = getResources().getStringArray(R.array.type);
-            ArrayAdapter<String> objAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strtype);
+            strPondsName = getResources().getStringArray(R.array.type);
+            ArrayAdapter<String> objAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strPondsName);
             spntype.setAdapter(objAdapter);
             spntype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
-                    typeChoosed = strtype[i];
-                    if (typeChoosed.equals(strtype[0])) {
-                        url1 = url + "4096,1505";
-                        url2 = url + "4096,1506";
-                        sMotorUrl[1] = url + "4096,1560";
-                        sMotorUrl[2] = url + "4096,1564";
-                        sMotorUrl[3] = url + "4096,1561";
-                        sMotorUrl[4] = url + "4096,1565";
-                        sMotorUrl[5] = url + "4096,1562";
-                        sMotorUrl[6] = url + "4096,1566";
-                        sMotorUrl[7] = url + "4096,1563";
-                        sMotorUrl[8] = url + "4096,1567";
-                        sMotorUrl[9] = url + "4096,1568";
-                        sMotorUrl[10] = url + "4096,1569";
-                        sMotorUrl[11] = url + "4096,1570";
-                        sMotorUrl[12] = url + "4096,1571";
-                    } else if (typeChoosed.equals(strtype[1])) {
-                        url1 = url + "8192,100";
-                        url2 = url + "8192,99";
-                        for(i=1;i<12;i++)  sMotorUrl[i] = url + "8192,99";
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    int i;
 
+                    url1 = BaseURL[pos] + ",4096,1505";
+                    url2 = BaseURL[pos] + ",4096,1506";
+                    sAvlMotorUrl = BaseURL[pos] + ",4096,1507";
+
+                    SelectedPond = pos;
+
+                    if (pos == 0 ) {
+
+                        sMotorUrl[1] = BaseURL[pos] + ",4096,1560";
+                        sMotorUrl[2] = BaseURL[pos] + ",4096,1564";
+                        sMotorUrl[3] = BaseURL[pos] + ",4096,1561";
+                        sMotorUrl[4] = BaseURL[pos] + ",4096,1565";
+                        sMotorUrl[5] = BaseURL[pos] + ",4096,1562";
+                        sMotorUrl[6] = BaseURL[pos] + ",4096,1566";
+                        sMotorUrl[7] = BaseURL[pos] + ",4096,1563";
+                        sMotorUrl[8] = BaseURL[pos] + ",4096,1567";
+                        sMotorUrl[9] = BaseURL[pos] + ",4096,1568";
+                        sMotorUrl[10] = BaseURL[pos] + ",4096,1569";
+                        sMotorUrl[11] = BaseURL[pos] + ",4096,1570";
+                        sMotorUrl[12] = BaseURL[pos] + ",4096,1571";
+                    } else if (pos==1) {
+                        url1 = BaseURL[pos] + ",8192,100";
+                        url2 = BaseURL[pos] + ",4096,1560";
+                        for (i = 1; i < 12; i++) sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
+                    } else {
+                        int ionumber= 1560;
+
+                        for (i=1;i<=12;i++){
+                            sMotorUrl[i] = BaseURL[pos] +",4096,"+ String.valueOf(ionumber);
+                            ionumber++;
+                        }
                     }
 
                     obj = new HandleXML(url1);
@@ -127,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                         xmlMotor[i].fetchXML();
                     }
 
-                    xmlUsableMotorCount = new HandleXML(url + "4096,1507");
+                    xmlUsableMotorCount = new HandleXML(sAvlMotorUrl);
                     xmlUsableMotorCount.fetchXML();
 
 
@@ -159,24 +179,24 @@ public class MainActivity extends AppCompatActivity {
 
                     btUsableMotor.setText(xmlUsableMotorCount.getLastValue());
 
-                    chkmotor();
+                    DisplayMotorStatus();
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
-                    typeChoosed = strtype[0];
+                    //SelectedPond=0;
                 }
             });
 
             bt3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (typeChoosed.equals(strtype[0])) {
+                    if (SelectedPond==0) {
                         Intent intent = getIntent();
                         finish();
                         startActivity(intent);
                     } else {
-                        url1 = url + "8192,100";
+                        url1 = BaseURL + "100";
                         obj = new HandleXML(url1);
                         obj.fetchXML();
                         while (!obj.parsingComplete) ;
@@ -195,6 +215,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            m[1].setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    ShowMotorState(2);
+                    return true;
+                }
+            });
+
 
             m[1].setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -202,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
                     ShowMotorState(1);
                 }
             });
+
             m[2].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -272,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void chkmotor(){
+    public void DisplayMotorStatus(){
 
         for(int i=1;i<=12;i++) {
             if (xmlMotor[i].getLastValue().equals("3")) {
@@ -282,9 +311,13 @@ public class MainActivity extends AppCompatActivity {
                     m[i].setBackgroundColor(Color.argb(64,64,64,0));
                 else
                     m[i].setBackgroundColor(Color.BLACK);
+            } else if (xmlMotor[i].getLastValue().equals("-")) {
+                m[i].setBackgroundColor(Color.WHITE);
             } else {
                 m[i].setBackgroundColor(Color.RED);
             }
+
+
 
         }
 
@@ -293,31 +326,63 @@ public class MainActivity extends AppCompatActivity {
     public void ShowMotorState(int mNo){
 
         String[] sStateMeaning = {
-            "null","Unknow","Activate","On","Deactivate","Off","OverCurrent","UnderCurrent","InternalErr","CommError","LastState"
+            "null","Unknow","Activate","On","Deactivate","Off",
+            "OverCurrent","UnderCurrent","InternalErr","CommError","LastState"
         };
+
+        if (xmlMotor[mNo].getLastValue().equals("-")) return;
 
         int state = Integer.parseInt(xmlMotor[mNo].getLastValue());
 
         Toast.makeText(this,"Motor"+ mNo + " " + sStateMeaning[state] + " S" + state , Toast.LENGTH_SHORT).show();
 
-
-
-
     }
 
     public void LaunchGraph(View view) {
-        String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
-        String message = "hello world \r\n";
+        //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
+        String message = BaseURL[SelectedPond];
         Intent intent = new Intent(this, GraphActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra("BASE_URL", message);
+        intent.putExtra("SELECTED_POND", SelectedPond);
         startActivity(intent);
     }
 
     public void LaunchGrid(View view) {
-        String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
-        String message = "hello world \r\n";
+        //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
+        String message = BaseURL[SelectedPond];
         Intent intent = new Intent(this, GridActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra("BASE_URL", message);
+        intent.putExtra("SELECTED_POND", SelectedPond);
         startActivity(intent);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putBoolean("MyBoolean", true);
+        savedInstanceState.putDouble("myDouble", 1.9);
+        savedInstanceState.putInt("MyInt", 1);
+        savedInstanceState.putString("MyString", "Welcome back to Android");
+        savedInstanceState.putInt("SelectedPond", SelectedPond);
+        // etc.
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        boolean myBoolean = savedInstanceState.getBoolean("MyBoolean");
+        double myDouble = savedInstanceState.getDouble("myDouble");
+        int myInt = savedInstanceState.getInt("MyInt");
+        String myString = savedInstanceState.getString("MyString");
+        SelectedPond = savedInstanceState.getInt("SelectedPond");
+        if (SelectedPond>=BaseURL.length)
+            SelectedPond=0;
+    }
+
 }
+

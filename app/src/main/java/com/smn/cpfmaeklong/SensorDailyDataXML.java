@@ -26,7 +26,7 @@ public class SensorDailyDataXML {
     private int iRecordCount;
 
     private XmlPullParserFactory xmlFactoryObject;
-    public volatile boolean parsingComplete = true;
+    public volatile boolean parsingComplete = false;
 
 
     public SensorDailyDataXML(String url){
@@ -65,7 +65,7 @@ public class SensorDailyDataXML {
                 }
                 event = myParser.next();
             }
-            parsingComplete = false;
+            parsingComplete = true;
         }
         catch (Exception e) {
             e.printStackTrace();

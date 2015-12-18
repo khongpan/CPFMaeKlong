@@ -1,5 +1,6 @@
 package com.smn.cpfmaeklong;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ public class GridActivity extends AppCompatActivity {
     float oldYAxis = 0f;
     float newXAxis = 0f;
     float newYAxis = 0f;
+    String BaseURL;
+    int SelectedPond;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -40,9 +43,16 @@ public class GridActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grid);
+
+        Intent intent = getIntent();
+        BaseURL = intent.getStringExtra("BASE_URL");
+        SelectedPond = intent.getIntExtra("SELECTED_POND", 0);
+
         chkdate.setDate(chkdate.getDate() + 1);
+
         ShowGrid();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -77,7 +87,8 @@ public class GridActivity extends AppCompatActivity {
         final EditText keysch;
         final Button sch, btBack, btNext;
         final int[] index = new int[1];
-        String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&syslog=POND-CONTROL";
+        //String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&syslog=POND-CONTROL";
+        String url = BaseURL.replace("p=","syslog=");
         final HandleXML objs;
 
         String today = new SimpleDateFormat("yyyy-MM-dd").format(date);

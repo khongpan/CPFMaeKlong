@@ -1,0 +1,15 @@
+
+[I/O model] เรียกดูรายการ I/O ทั้งหมด
+http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64
+
+[applog] เรียกดู applog สำหรับ I/O และวันที่ที่กำหนด (กรณีไม่ใส่วันที่จะได้ข้อมูลล่าสุด)
+http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&applog=POND-CONTROL,4096,100,2015-09-01
+
+[syslog - NodeDateTime] เรียกดู system log สำหรับ NetworkID, NodeID และวันที่ ของ NodeDateTime ที่กำหนด
+http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&syslog=POND-CONTROL,4096,2015-09-01,NodeDateTime
+
+[syslog - ServerDateTime] เรียกดู system log สำหรับ NetworkID, NodeID และวัน ที่ของ ServerDateTime ที่กำหนด
+http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&syslog=POND-CONTROL,4096,2015-09-01,ServerDateTime
+
+[errlog] เรียกดู error log สำหรับ NetworkID, NodeID และวันที่ที่กำหนด
+http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&errlog=POND-CONTROL,5120,2015-08-05
