@@ -20,24 +20,45 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class SensorDailyDataXML {
-    private String strURL=null;
+    private String strUrl=null;
     private String[] strDateTime =new String[288];
     private String[] strValue = new String[288];
+    private String mIoName;
     private int iRecordCount;
 
     private XmlPullParserFactory xmlFactoryObject;
-    public volatile boolean parsingComplete = false;
+    private volatile boolean parsingComplete = false;
 
 
     public SensorDailyDataXML(String url){
-        this.strURL = url;
+        this.strUrl = url;
+    }
+
+    public boolean isFetchComplete(){
+        return parsingComplete;
+    }
+
+    public String[] getDatas() {
+        return strValue;
     }
 
     public int getCountRecord (){
         return iRecordCount;
     }
 
-    public void parseXMLAndStoreIt(XmlPullParser myParser) {
+    public String getIoName() {
+        return mIoName;
+    }
+
+    public float getDataValue(int index) {
+
+        String str=strValue[index];
+
+        return Float.parseFloat(str);
+
+    }
+
+    public void parseXML(XmlPullParser myParser) {
         int event,i = 0;
         String text=null;
         try {
@@ -46,7 +67,10 @@ public class SensorDailyDataXML {
                 String name=myParser.getName();
                 switch (event) {
                     case XmlPullParser.START_TAG:
-                        break;
+                        if (name.equals("IO")) {
+                            mIoName = myParser.getAttributeValue(null, "Name");
+                        }
+                            break;
                     case XmlPullParser.TEXT:
                         text = myParser.getText();
                         break;
@@ -57,7 +81,7 @@ public class SensorDailyDataXML {
                                 i++;
                                 iRecordCount++;
                                 break;
-                            case "NodeDateTime":
+                            case "IODateTime":
                                 strDateTime[i] = text;
                                 break;
                         }
@@ -71,12 +95,16 @@ public class SensorDailyDataXML {
             e.printStackTrace();
         }
     }
-    public void fetchXML(){
+    public void fetchXML(String reqUrl){
+
+        strUrl = reqUrl;
+
+        parsingComplete = false;
         Thread thread = new Thread(new Runnable(){
             @Override
             public void run() {
                 try {
-                    URL url = new URL(strURL);
+                    URL url = new URL(strUrl);
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                     conn.setReadTimeout(10000 /* milliseconds */);
                     conn.setConnectTimeout(15000 /* milliseconds */);
@@ -90,7 +118,7 @@ public class SensorDailyDataXML {
 
                     myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
                     myparser.setInput(stream, null);
-                    parseXMLAndStoreIt(myparser);
+                    parseXML(myparser);
                     stream.close();
                 }
                 catch (Exception e) {

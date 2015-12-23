@@ -136,51 +136,10 @@ public class MainActivity extends AppCompatActivity {
                             ionumber++;
                         }
                     }
+                    UpdateView();
 
-                    obj = new HandleXML(url1);
-                    obj.fetchXML();
-                    obj2 = new HandleXML(url2);
-                    obj2.fetchXML();
-
-                    for (i = 1; i <= 12; i++) {
-                        xmlMotor[i] = new HandleXML(sMotorUrl[i]);
-                        xmlMotor[i].fetchXML();
-                    }
-
-                    xmlUsableMotorCount = new HandleXML(sAvlMotorUrl);
-                    xmlUsableMotorCount.fetchXML();
-
-
-                    while (!obj.parsingComplete) ;
-                    while (!obj2.parsingComplete) ;
-
-                    for (i = 1; i <= 12; i++) {
-                        while (!xmlMotor[i].parsingComplete) ;
-                    }
-
-                    while (!xmlUsableMotorCount.parsingComplete) ;
-
-                    bt.setText(obj.getLastValue());
-                    bt2.setText(obj2.getLastValue());
-                    tv.setText(obj.getLastIODateTime());
-
-                    String str = bt.getText().toString();
-                    float f = Float.parseFloat(str);
-                    if (f < 1) {
-                        f = f * 20;
-                    }
-                    str = String.format("%.2f", f);
-                    bt.setText(str);
-
-                    for (i = 1; i <= 12; i++) {
-                        m[i].setText(String.valueOf(i));
-                    }
-
-
-                    btUsableMotor.setText(xmlUsableMotorCount.getLastValue());
-
-                    DisplayMotorStatus();
                 }
+
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
@@ -191,34 +150,14 @@ public class MainActivity extends AppCompatActivity {
             bt3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (SelectedPond==0) {
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
-                    } else {
-                        url1 = BaseURL + "100";
-                        obj = new HandleXML(url1);
-                        obj.fetchXML();
-                        while (!obj.parsingComplete) ;
-
-                        bt.setText(obj.getLastValue());
-                        tv.setText(obj.getLastIODateTime());
-
-                        String str = bt.getText().toString();
-                        float f = Float.parseFloat(str);
-                        if (f < 1) {
-                            f = f * 20;
-                        }
-                        str = String.format("%.2f", f);
-                        bt.setText(str);
-                    }
+                    UpdateView();
                 }
             });
 
             m[1].setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    ShowMotorState(2);
+                    launchDailyGraph(v);
                     return true;
                 }
             });
@@ -338,6 +277,53 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void UpdateView (){
+
+        obj = new HandleXML(url1);
+        obj.fetchXML();
+        obj2 = new HandleXML(url2);
+        obj2.fetchXML();
+
+        for (int i = 1; i <= 12; i++) {
+            xmlMotor[i] = new HandleXML(sMotorUrl[i]);
+            xmlMotor[i].fetchXML();
+        }
+
+        xmlUsableMotorCount = new HandleXML(sAvlMotorUrl);
+        xmlUsableMotorCount.fetchXML();
+
+
+        while (!obj.parsingComplete) ;
+        while (!obj2.parsingComplete) ;
+
+        for (int i = 1; i <= 12; i++) {
+            while (!xmlMotor[i].parsingComplete) ;
+        }
+
+        while (!xmlUsableMotorCount.parsingComplete) ;
+
+        bt.setText(obj.getLastValue());
+        bt2.setText(obj2.getLastValue());
+        tv.setText(obj.getLastIODateTime());
+
+        String str = bt.getText().toString();
+        float f = Float.parseFloat(str);
+        if (f < 1) {
+            f = f * 20;
+        }
+        str = String.format("%.2f", f);
+        bt.setText(str);
+
+        for (int i = 1; i <= 12; i++) {
+            m[i].setText(String.valueOf(i));
+        }
+
+
+        btUsableMotor.setText(xmlUsableMotorCount.getLastValue());
+
+        DisplayMotorStatus();
+    }
+
     public void LaunchGraph(View view) {
         //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
         String message = BaseURL[SelectedPond];
@@ -353,6 +339,17 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, GridActivity.class);
         intent.putExtra("BASE_URL", message);
         intent.putExtra("SELECTED_POND", SelectedPond);
+        startActivity(intent);
+    }
+
+    public void launchDailyGraph(View view) {
+        String message = BaseURL[SelectedPond];
+        String graphSeries = new String("DO_PROBE");
+
+        Intent intent = new Intent(this, DailyGraphActivity.class);
+        intent.putExtra("BASE_URL", message);
+        intent.putExtra("SELECTED_POND", SelectedPond);
+        intent.putExtra("GRAPH_SERIES", graphSeries);
         startActivity(intent);
     }
 
