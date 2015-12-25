@@ -45,6 +45,9 @@ public class DailyGraphFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    Date date = new Date();
+    String mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
     private String mBaseUrl;
     private int mSelectedPond;
     private String mGraphSeries;
@@ -58,12 +61,11 @@ public class DailyGraphFragment extends Fragment {
     private LineGraphSeries<DataPoint> mSeries1;
     private LineGraphSeries<DataPoint> mSeries2;
     private GraphView mGraphView;
-    private double graph2LastXValue = 5d;
 
-    private SensorDailyDataXML dailyDataXml;
 
-    //private ProgressDialog prgDialog;
-    //public static final int progress_bar_type = 0;
+    private SensorDailyDataXML sensorXml1;
+    private SensorDailyDataXML sensorXml2;
+
 
     public DailyGraphFragment() {
         // Required empty public constructor
@@ -105,8 +107,6 @@ public class DailyGraphFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_daily_graph, container, false);
-        Date date = new Date();
-        String strDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
         String ioName="DO";
 
         //GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
@@ -114,27 +114,15 @@ public class DailyGraphFragment extends Fragment {
         mGraphView = (GraphView) rootView.findViewById(R.id.graph);
 
        //mSeries1 = new LineGraphSeries<DataPoint>(generateData());
-        downloadDailyData("100", strDay, ioName);
-        mSeries1 = new LineGraphSeries<DataPoint>(getDailyData());
-        mGraphView.addSeries(mSeries1);
-        mSeries1.setTitle(dailyDataXml.getIoName());
-        mSeries1.setColor(Color.BLUE);
-        mSeries1.setThickness(2);
+        //downloadDailyData("100", strDay, ioName);
 
         setGraphFormat();
+        updateGraph();
 
-
-
-        GraphView graph2 = (GraphView) rootView.findViewById(R.id.graph2);
-        mSeries2 = new LineGraphSeries<DataPoint>();
-        graph2.addSeries(mSeries2);
-        graph2.getViewport().setXAxisBoundsManual(true);
-        graph2.getViewport().setMinX(0);
-        graph2.getViewport().setMaxX(40);
-
-        return rootView;
         // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_daily_graph, container, false);
+        return rootView;
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -163,83 +151,13 @@ public class DailyGraphFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-/*
-        mTimer1 = new Runnable() {
-            @Override
-            public void run() {
-                mSeries1.resetData(generateData());
-                mHandler.postDelayed(this, 300);
-            }
-        };
-
-        mHandler.postDelayed(mTimer1, 300);
-*/
-/*
-        mTimer2 = new Runnable() {
-            @Override
-            public void run() {
-                graph2LastXValue += 1d;
-                mSeries2.appendData(new DataPoint(graph2LastXValue, getRandom()), true, 40);
-                mHandler.postDelayed(this, 200);
-            }
-        };
-        mHandler.postDelayed(mTimer2, 1000);
-*/
     }
 
     @Override
     public void onPause() {
-        //mHandler.removeCallbacks(mTimer1);
-        //mHandler.removeCallbacks(mTimer2);
         super.onPause();
     }
 
-    private DataPoint[] generateData() {
-        int count = 30;
-        DataPoint[] values = new DataPoint[count];
-        for (int i=0; i<count; i++) {
-            double x = i;
-            double f = mRand.nextDouble()*0.15+0.3;
-            double y = Math.sin(i*f+2) + mRand.nextDouble()*0.3;
-            DataPoint v = new DataPoint(x, y);
-            values[i] = v;
-        }
-        return values;
-    }
-
-    double mLastRandom = 2;
-    Random mRand = new Random();
-    private double getRandom() {
-        return mLastRandom += mRand.nextDouble()*0.5 - 0.25;
-    }
-
-    private void downloadDailyData(String io_number,String date_str,String io_name) {
-
-        DataPoint[] dataPoint;
-        String finalUrl;
-
-        finalUrl = mBaseUrl+",4096,"+io_number+","+date_str;
-
-        dailyDataXml = new SensorDailyDataXML(finalUrl);
-
-        dailyDataXml.fetchXML(finalUrl);
-        while (!dailyDataXml.isFetchComplete());
-
-    }
-
-    private DataPoint[] getDailyData() {
-
-        DataPoint[] dataPoint;
-
-        dataPoint = new DataPoint[dailyDataXml.getCountRecord()];
-
-        for (int i=0; i <dailyDataXml.getCountRecord(); i++) {
-            DataPoint v = new DataPoint(i, dailyDataXml.getDataValue(i));
-            dataPoint[i] = v;
-        }
-        return dataPoint;
-
-    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -278,15 +196,63 @@ public class DailyGraphFragment extends Fragment {
         staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
-        //ShowGraph();
+        mSeries1 = new LineGraphSeries<DataPoint>();
+        mSeries2 = new LineGraphSeries<DataPoint>();
 
+        mSeries1.setTitle("series 1");
+        mSeries1.setColor(Color.BLUE);
+        mSeries1.setThickness(2);
 
-        //series2.setTitle("Aerator");
-        //series2.setColor(Color.RED);
-        //series2.setThickness(2);
+        mSeries2.setTitle("series 2");
+        mSeries2.setColor(Color.RED);
+        mSeries2.setThickness(2);
 
-        //graphView.addSeries(seriesB);
-        //graphView.addSeries(seriesA);
+        mGraphView.addSeries(mSeries1);
+        mGraphView.addSeries(mSeries2);
+    }
+
+    public void updateSeriesData() {
+        {
+
+            DataPoint[] dataPoint;
+
+            dataPoint = new DataPoint[sensorXml1.getCountRecord()];
+
+            for (int i=0; i < sensorXml1.getCountRecord(); i++) {
+                DataPoint v = new DataPoint(i, sensorXml1.getDataValue(i));
+                dataPoint[i] = v;
+            }
+            mSeries1.resetData(dataPoint);
+
+        }
+
+        {
+
+            DataPoint[] dataPoint;
+
+            dataPoint = new DataPoint[sensorXml2.getCountRecord()];
+
+            for (int i=0; i <sensorXml2.getCountRecord(); i++) {
+                DataPoint v = new DataPoint(i, sensorXml2.getDataValue(i));
+                dataPoint[i] = v;
+            }
+            mSeries2.resetData(dataPoint);
+
+        }
+
+        mSeries1.setTitle(sensorXml1.getIoName());
+        mSeries2.setTitle(sensorXml2.getIoName());
+
+    }
+
+    void setDate(String date_str) {
+        mStrSelectedDay = date_str;
+    }
+
+    void updateGraph() {
+
+        DownloadFromInternet Downloader = new DownloadFromInternet();
+        Downloader.execute("100", mStrSelectedDay);
     }
 
 
@@ -306,8 +272,22 @@ public class DailyGraphFragment extends Fragment {
         protected String doInBackground(String... str) {
             int count=1;
             try {
+                DataPoint[] dataPoint;
+                String finalUrl;
+                String io_number = str[0];
+                String date_str = str[1];
 
-                while (true) {
+                finalUrl = mBaseUrl+",4096,"+io_number+","+date_str;
+                sensorXml1 = new SensorDailyDataXML(finalUrl);
+                sensorXml1.fetchXML(finalUrl);
+
+
+                finalUrl = mBaseUrl+",4096,"+"101"+","+date_str;
+                sensorXml2 = new SensorDailyDataXML(finalUrl);
+                sensorXml2.fetchXML(finalUrl);
+
+                while (!sensorXml1.isFetchComplete()){
+                    while(!sensorXml2.isFetchComplete());
 
                     // Publish the progress which triggers onProgressUpdate method
                     //publishProgress(""+count++);
@@ -327,13 +307,15 @@ public class DailyGraphFragment extends Fragment {
             //prgDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
-        // Once Music File is downloaded
+        // Once XML is downloaded
         @Override
         protected void onPostExecute(String file_url) {
             // Dismiss the dialog after the Music file was downloaded
             //dismissDialog(progress_bar_type);
             //Toast.makeText(getApplicationContext(), "Download complete", Toast.LENGTH_LONG).show();
             // Play the music
+            updateSeriesData();
+
         }
     }
 }
