@@ -4,9 +4,7 @@
     android:layout_height="wrap_content"
     tools:context="com.smn.cpfmaeklong.DateNavigateFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
-    <Button
+     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

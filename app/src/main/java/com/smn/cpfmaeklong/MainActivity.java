@@ -16,12 +16,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Date;
-
 public class MainActivity extends AppCompatActivity {
-    Button bt,bt2,bt3,btUsableMotor;
+    Button mBtnDoLevel, mBtnOnMotorCount, mBtnRefresh, mBtnUsableMotor;
     TextView tv;
-    TextView[] m=new TextView[12+1];
+    TextView[] mAerator =new TextView[12+1];
     String url1,url2;
     String[] sMotorUrl= new String[12+1];
     String sAvlMotorUrl;
@@ -71,23 +69,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void StartApp() {
-        bt = (Button) findViewById(R.id.btnDOL);
-        bt2 = (Button) findViewById(R.id.btnOMC);
-        bt3 = (Button) findViewById(R.id.btnRefresh);
-        btUsableMotor = (Button) findViewById(R.id.btUsableAerator);
+        mBtnDoLevel = (Button) findViewById(R.id.btnDOL);
+        mBtnOnMotorCount = (Button) findViewById(R.id.btnOMC);
+        mBtnRefresh = (Button) findViewById(R.id.btnRefresh);
+        mBtnUsableMotor = (Button) findViewById(R.id.btUsableAerator);
         tv = (TextView) findViewById(R.id.txtDate);
-        m[1] = (TextView) findViewById(R.id.btM1);
-        m[2] = (TextView) findViewById(R.id.btM2);
-        m[3] = (TextView) findViewById(R.id.btM3);
-        m[4] = (TextView) findViewById(R.id.btM4);
-        m[5] = (TextView) findViewById(R.id.btM5);
-        m[6] = (TextView) findViewById(R.id.btM6);
-        m[7] = (TextView) findViewById(R.id.btM7);
-        m[8] = (TextView) findViewById(R.id.btM8);
-        m[9]= (TextView) findViewById(R.id.btM9);
-        m[10] = (TextView) findViewById(R.id.btM10);
-        m[11] = (TextView) findViewById(R.id.btM11);
-        m[12] = (TextView) findViewById(R.id.btM12);
+        mAerator[1] = (TextView) findViewById(R.id.btM1);
+        mAerator[2] = (TextView) findViewById(R.id.btM2);
+        mAerator[3] = (TextView) findViewById(R.id.btM3);
+        mAerator[4] = (TextView) findViewById(R.id.btM4);
+        mAerator[5] = (TextView) findViewById(R.id.btM5);
+        mAerator[6] = (TextView) findViewById(R.id.btM6);
+        mAerator[7] = (TextView) findViewById(R.id.btM7);
+        mAerator[8] = (TextView) findViewById(R.id.btM8);
+        mAerator[9] = (TextView) findViewById(R.id.btM9);
+        mAerator[10] = (TextView) findViewById(R.id.btM10);
+        mAerator[11] = (TextView) findViewById(R.id.btM11);
+        mAerator[12] = (TextView) findViewById(R.id.btM12);
 
         ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cManager.getActiveNetworkInfo();
@@ -147,14 +145,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            bt3.setOnClickListener(new View.OnClickListener() {
+            mBtnRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     UpdateView();
                 }
             });
 
-            m[1].setOnLongClickListener(new View.OnLongClickListener() {
+            mBtnDoLevel.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     launchDailyGraph(v);
@@ -163,75 +161,73 @@ public class MainActivity extends AppCompatActivity {
             });
 
 
-            m[1].setOnClickListener(new View.OnClickListener() {
+            mAerator[1].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(1);
                 }
             });
-
-            m[2].setOnClickListener(new View.OnClickListener() {
+            mAerator[2].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(2);
                 }
             });
-            m[3].setOnClickListener(new View.OnClickListener() {
+            mAerator[3].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(3);
-;
                 }
             });
-            m[4].setOnClickListener(new View.OnClickListener() {
+            mAerator[4].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(4);
                 }
             });
-            m[5].setOnClickListener(new View.OnClickListener() {
+            mAerator[5].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(5);
                 }
             });
-            m[6].setOnClickListener(new View.OnClickListener() {
+            mAerator[6].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(6);
                 }
             });
-            m[7].setOnClickListener(new View.OnClickListener() {
+            mAerator[7].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(7);
                 }
             });
-            m[8].setOnClickListener(new View.OnClickListener() {
+            mAerator[8].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(8);
                 }
             });
-            m[9].setOnClickListener(new View.OnClickListener() {
+            mAerator[9].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(9);
                 }
             });
-            m[10].setOnClickListener(new View.OnClickListener() {
+            mAerator[10].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(10);
                 }
             });
-            m[11].setOnClickListener(new View.OnClickListener() {
+            mAerator[11].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(11);
                 }
             });
-            m[12].setOnClickListener(new View.OnClickListener() {
+            mAerator[12].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowMotorState(12);
@@ -244,16 +240,16 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i=1;i<=12;i++) {
             if (xmlMotor[i].getLastValue().equals("3")) {
-                m[i].setBackgroundColor(Color.argb(255, 0, 150, 0));
+                mAerator[i].setBackgroundColor(Color.argb(255, 0, 150, 0));
             } else if (xmlMotor[i].getLastValue().equals("5")) {
                 if (xmlMotor[i].getNote().equals("must_off"))
-                    m[i].setBackgroundColor(Color.argb(64,64,64,0));
+                    mAerator[i].setBackgroundColor(Color.argb(64,64,64,0));
                 else
-                    m[i].setBackgroundColor(Color.BLACK);
+                    mAerator[i].setBackgroundColor(Color.BLACK);
             } else if (xmlMotor[i].getLastValue().equals("-")) {
-                m[i].setBackgroundColor(Color.WHITE);
+                mAerator[i].setBackgroundColor(Color.WHITE);
             } else {
-                m[i].setBackgroundColor(Color.RED);
+                mAerator[i].setBackgroundColor(Color.RED);
             }
 
 
@@ -302,24 +298,24 @@ public class MainActivity extends AppCompatActivity {
 
         while (!xmlUsableMotorCount.parsingComplete) ;
 
-        bt.setText(obj.getLastValue());
-        bt2.setText(obj2.getLastValue());
+        mBtnDoLevel.setText(obj.getLastValue());
+        mBtnOnMotorCount.setText(obj2.getLastValue());
         tv.setText(obj.getLastIODateTime());
 
-        String str = bt.getText().toString();
+        String str = mBtnDoLevel.getText().toString();
         float f = Float.parseFloat(str);
         if (f < 1) {
             f = f * 20;
         }
         str = String.format("%.2f", f);
-        bt.setText(str);
+        mBtnDoLevel.setText(str);
 
         for (int i = 1; i <= 12; i++) {
-            m[i].setText(String.valueOf(i));
+            mAerator[i].setText(String.valueOf(i));
         }
 
 
-        btUsableMotor.setText(xmlUsableMotorCount.getLastValue());
+        mBtnUsableMotor.setText(xmlUsableMotorCount.getLastValue());
 
         DisplayMotorStatus();
     }

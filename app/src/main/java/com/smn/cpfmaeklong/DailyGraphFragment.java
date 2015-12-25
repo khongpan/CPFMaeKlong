@@ -109,20 +109,13 @@ public class DailyGraphFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_daily_graph, container, false);
         String ioName="DO";
 
-        //GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
-
         mGraphView = (GraphView) rootView.findViewById(R.id.graph);
-
-       //mSeries1 = new LineGraphSeries<DataPoint>(generateData());
-        //downloadDailyData("100", strDay, ioName);
 
         setGraphFormat();
         updateGraph();
 
         // Inflate the layout for this fragment
         return rootView;
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
