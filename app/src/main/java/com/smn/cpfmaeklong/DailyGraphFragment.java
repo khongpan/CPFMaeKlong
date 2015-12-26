@@ -3,6 +3,7 @@ package com.smn.cpfmaeklong;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -251,6 +252,8 @@ public class DailyGraphFragment extends Fragment {
 
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog;
+        boolean cancle;
 
         // Show Progress bar before downloading Music
         @Override
@@ -258,6 +261,21 @@ public class DailyGraphFragment extends Fragment {
             super.onPreExecute();
             // Shows Progress Bar Dialog and then call doInBackground method
             //showDialog(progress_bar_type);
+            cancle = false;
+
+            progressDialog = ProgressDialog.show(getActivity(),
+                    "Downloading Data",
+                    "Please Wait!");
+
+            progressDialog.setCanceledOnTouchOutside(true);
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    cancle = true;
+                }
+            });
+
+            //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
         }
 
         // Download xml from Internet
@@ -280,13 +298,16 @@ public class DailyGraphFragment extends Fragment {
                 sensorXml2.fetchXML(finalUrl);
 
                 while (!sensorXml1.isFetchComplete()){
-                    while(!sensorXml2.isFetchComplete());
-
                     // Publish the progress which triggers onProgressUpdate method
-                    //publishProgress(""+count++);
+                    Thread.sleep(1000);
+                    publishProgress("" + count++);
 
 
                 }
+                while (!sensorXml2.isFetchComplete());
+
+
+
 
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
@@ -295,19 +316,22 @@ public class DailyGraphFragment extends Fragment {
         }
 
         // While Downloading Music File
+        @Override
         protected void onProgressUpdate(String... progress) {
             // Set progress percentage
-            //prgDialog.setProgress(Integer.parseInt(progress[0]));
+            progressDialog.setMessage("Please wait... "+String.valueOf(progress[0])+" sec");
         }
 
         // Once XML is downloaded
         @Override
         protected void onPostExecute(String file_url) {
-            // Dismiss the dialog after the Music file was downloaded
-            //dismissDialog(progress_bar_type);
-            //Toast.makeText(getApplicationContext(), "Download complete", Toast.LENGTH_LONG).show();
+            // Dismiss the dialog after the Xml file was downloaded
+            //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
+
+            progressDialog.dismiss();
             // Play the music
             updateSeriesData();
+
 
         }
     }

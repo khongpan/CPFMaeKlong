@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.smn.cpfmaeklong"
         minSdkVersion 10
-        targetSdkVersion 23
+        targetSdkVersion 17
         versionCode 7
         versionName '0.07'
     }
