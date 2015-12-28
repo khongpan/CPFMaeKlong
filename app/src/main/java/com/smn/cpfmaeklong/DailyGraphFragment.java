@@ -108,7 +108,6 @@ public class DailyGraphFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_daily_graph, container, false);
-        String ioName="DO";
 
         mGraphView = (GraphView) rootView.findViewById(R.id.graph);
 

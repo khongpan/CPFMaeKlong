@@ -22,7 +22,7 @@ public class DailyGraphActivity extends AppCompatActivity
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+   // private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class DailyGraphActivity extends AppCompatActivity
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class DailyGraphActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
+        /*
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -116,11 +116,13 @@ public class DailyGraphActivity extends AppCompatActivity
                 Uri.parse("android-app://com.smn.cpfmaeklong/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+        */
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        /*
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -136,5 +138,6 @@ public class DailyGraphActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+        */
     }
 }
