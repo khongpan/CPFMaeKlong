@@ -1,11 +1,15 @@
 package com.smn.cpfmaeklong;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-2",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-3",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-4",};
-    HandleXML obj,obj2;
-    HandleXML[] xmlMotor=new HandleXML[12+1];
-    HandleXML xmlUsableMotorCount;
+    SensorInfoXML xmlDoLevel, xmlOnMotorCount;
+    SensorInfoXML[] xmlMotor=new SensorInfoXML[12+1];
+    SensorInfoXML xmlUsableMotorCount;
 
     private String[] strPondsName;
     int SelectedPond;
@@ -134,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             ionumber++;
                         }
                     }
-                    UpdateView();
+                    updateView();
 
                 }
 
@@ -148,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             mBtnRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UpdateView();
+                    updateView();
                 }
             });
 
@@ -242,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             if (xmlMotor[i].getLastValue().equals("3")) {
                 mAerator[i].setBackgroundColor(Color.argb(255, 0, 150, 0));
             } else if (xmlMotor[i].getLastValue().equals("5")) {
-                if (xmlMotor[i].getNote().equals("must_off"))
+                if (xmlMotor[i].getDetails().equals("must_off"))
                     mAerator[i].setBackgroundColor(Color.argb(64,64,64,0));
                 else
                     mAerator[i].setBackgroundColor(Color.BLACK);
@@ -273,51 +277,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void UpdateView (){
+    void updateView() {
 
-        obj = new HandleXML(url1);
-        obj.fetchXML();
-        obj2 = new HandleXML(url2);
-        obj2.fetchXML();
-
-        for (int i = 1; i <= 12; i++) {
-            xmlMotor[i] = new HandleXML(sMotorUrl[i]);
-            xmlMotor[i].fetchXML();
-        }
-
-        xmlUsableMotorCount = new HandleXML(sAvlMotorUrl);
-        xmlUsableMotorCount.fetchXML();
-
-
-        while (!obj.parsingComplete) ;
-        while (!obj2.parsingComplete) ;
-
-        for (int i = 1; i <= 12; i++) {
-            while (!xmlMotor[i].parsingComplete) ;
-        }
-
-        while (!xmlUsableMotorCount.parsingComplete) ;
-
-        mBtnDoLevel.setText(obj.getLastValue());
-        mBtnOnMotorCount.setText(obj2.getLastValue());
-        tv.setText(obj.getLastIODateTime());
-
-        String str = mBtnDoLevel.getText().toString();
-        float f = Float.parseFloat(str);
-        if (f < 1) {
-            f = f * 20;
-        }
-        str = String.format("%.2f", f);
-        mBtnDoLevel.setText(str);
-
-        for (int i = 1; i <= 12; i++) {
-            mAerator[i].setText(String.valueOf(i));
-        }
-
-
-        mBtnUsableMotor.setText(xmlUsableMotorCount.getLastValue());
-
-        DisplayMotorStatus();
+        DownloadFromInternet Downloader = new DownloadFromInternet();
+        Downloader.execute();
     }
 
     public void LaunchGraph(View view) {
@@ -375,6 +338,108 @@ public class MainActivity extends AppCompatActivity {
         SelectedPond = savedInstanceState.getInt("SelectedPond");
         if (SelectedPond>=BaseURL.length)
             SelectedPond=0;
+    }
+
+    // Async Task Class
+    class DownloadFromInternet extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog;
+        boolean cancle;
+
+        // Show Progress bar before downloading Music
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Shows Progress Bar Dialog and then call doInBackground method
+            //showDialog(progress_bar_type);
+            cancle = false;
+
+            progressDialog = ProgressDialog.show(MainActivity.this,
+                    "Downloading Data",
+                    "Please Wait!");
+
+            progressDialog.setCanceledOnTouchOutside(true);
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    cancle = true;
+                }
+            });
+
+            //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
+        }
+
+        // Download xml from Internet
+        @Override
+        protected String doInBackground(String... str) {
+            int count=1;
+            try {
+                xmlDoLevel = new SensorInfoXML(url1);
+                xmlDoLevel.fetchXML();
+                xmlOnMotorCount = new SensorInfoXML(url2);
+                xmlOnMotorCount.fetchXML();
+
+                for (int i = 1; i <= 12; i++) {
+                    xmlMotor[i] = new SensorInfoXML(sMotorUrl[i]);
+                    xmlMotor[i].fetchXML();
+                }
+
+                xmlUsableMotorCount = new SensorInfoXML(sAvlMotorUrl);
+                xmlUsableMotorCount.fetchXML();
+
+
+                while (!xmlDoLevel.isFetchComplete()) {
+                    Thread.sleep(1000);
+                    publishProgress("" + count++);
+                }
+                while (!xmlOnMotorCount.isFetchComplete()) ;
+                for (int i = 1; i <= 12; i++) {
+                    while (!xmlMotor[i].isFetchComplete()) ;
+                }
+                while (!xmlUsableMotorCount.isFetchComplete()) ;
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+            return null;
+        }
+
+        // While Downloading Music File
+        @Override
+        protected void onProgressUpdate(String... progress) {
+            // Set progress percentage
+            progressDialog.setMessage("Please wait... "+String.valueOf(progress[0])+" sec");
+        }
+
+        // Once XML is downloaded
+        @Override
+        protected void onPostExecute(String file_url) {
+            // Dismiss the dialog after the Xml file was downloaded
+            //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
+
+            progressDialog.dismiss();
+            // Play the music
+            //updateSeriesData();
+            mBtnDoLevel.setText(xmlDoLevel.getLastValue());
+            mBtnOnMotorCount.setText(xmlOnMotorCount.getLastValue());
+            tv.setText(xmlDoLevel.getIoDateTime());
+
+            String str = mBtnDoLevel.getText().toString();
+            float f = Float.parseFloat(str);
+            if (f < 1) {
+                f = f * 20;
+            }
+            str = String.format("%.2f", f);
+            mBtnDoLevel.setText(str);
+
+            for (int i = 1; i <= 12; i++) {
+                mAerator[i].setText(String.valueOf(i));
+            }
+
+
+            mBtnUsableMotor.setText(xmlUsableMotorCount.getLastValue());
+
+            DisplayMotorStatus();
+
+        }
     }
 
 }

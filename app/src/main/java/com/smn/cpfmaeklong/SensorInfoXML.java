@@ -38,12 +38,16 @@ public class SensorInfoXML {
         return mStrIoDateTime;
     }
 
-    public String getValue() {
+    public String getLastValue() {
         return mStrLastValue;
     }
 
     public String getIoName() {
         return mStrName;
+    }
+
+    public String getDetails() {
+        return mStrDetails;
     }
 
 
@@ -91,6 +95,11 @@ public class SensorInfoXML {
             e.printStackTrace();
         }
     }
+
+    public void fetchXML(){
+        fetchXML(mStrUrl);
+    }
+
     public void fetchXML(String reqUrl){
 
         mStrUrl = reqUrl;
