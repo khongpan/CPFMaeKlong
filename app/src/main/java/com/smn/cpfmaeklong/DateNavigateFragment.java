@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -72,11 +73,6 @@ public class DateNavigateFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
-
-
-
     }
 
     @Override
@@ -87,6 +83,10 @@ public class DateNavigateFragment extends Fragment {
         btnNextDay = (Button) view.findViewById(R.id.btn_next_day);
         btnPrevDay = (Button) view.findViewById(R.id.btn_prev_day);
         tvCurrentDate = (TextView) view.findViewById(R.id.tv_current_date);
+        //if (mStrCurrentDate==null) {
+        ////    mStrCurrentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        //    tvCurrentDate.setText(mStrCurrentDate);
+       // }
 
         btnNextDay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,8 +146,38 @@ public class DateNavigateFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("STR_CURRENT_DATE", mStrCurrentDate);
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
+        if (savedInstanceState!=null) {
+            mStrCurrentDate = savedInstanceState.getString("STR_CURRENT_DATE");
+            mCurrentDate = convertStringToDate(mStrCurrentDate);
+        }
+        if (mStrCurrentDate==null) {
+            mStrCurrentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        }
+        tvCurrentDate.setText(mStrCurrentDate);
+    }
+
+    public static Date convertStringToDate(String date) {
+        SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+        if (date != null) {
+            try {
+                return FORMATTER.parse(date);
+            } catch (ParseException e) {
+                // nothing we can do if the input is invalid
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

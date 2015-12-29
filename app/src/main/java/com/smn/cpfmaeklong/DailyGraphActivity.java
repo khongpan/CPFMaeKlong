@@ -16,8 +16,8 @@ public class DailyGraphActivity extends AppCompatActivity
 
     private String mBaseUrl;
     private int mSelectedPond;
-    private String mGraphSeries;
     private String mCurrentDate;
+    private String mGraphGroup;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -32,7 +32,7 @@ public class DailyGraphActivity extends AppCompatActivity
         Intent intent = getIntent();
         mBaseUrl = intent.getStringExtra("BASE_URL");
         mSelectedPond = intent.getIntExtra("SELECTED_POND", 0);
-        mGraphSeries = intent.getStringExtra("GRAPH_SERIES");
+        mGraphGroup = intent.getStringExtra("GRAPH_GROUP");
 
 
         // However, if we're being restored from a previous state,
@@ -51,6 +51,8 @@ public class DailyGraphActivity extends AppCompatActivity
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
+
+
             dailyGraphFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
@@ -93,6 +95,7 @@ public class DailyGraphActivity extends AppCompatActivity
 
             // Call a method in the ArticleFragment to update its content
             dailyGraphFragment.setDate(mCurrentDate);
+            dailyGraphFragment.setGraphGroup(mGraphGroup);
             dailyGraphFragment.updateGraph();
         }
     }
@@ -139,5 +142,32 @@ public class DailyGraphActivity extends AppCompatActivity
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
         */
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putBoolean("MyBoolean", true);
+        savedInstanceState.putDouble("myDouble", 1.9);
+        savedInstanceState.putInt("MyInt", 1);
+        savedInstanceState.putString("MyString", "Welcome back to Android");
+        //savedInstanceState.putInt("SelectedPond", SelectedPond);
+        // etc.
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        boolean myBoolean = savedInstanceState.getBoolean("MyBoolean");
+        double myDouble = savedInstanceState.getDouble("myDouble");
+        int myInt = savedInstanceState.getInt("MyInt");
+        String myString = savedInstanceState.getString("MyString");
+        //SelectedPond = savedInstanceState.getInt("SelectedPond");
+        //if (SelectedPond>=BaseURL.length)
+        //    SelectedPond=0;
     }
 }

@@ -243,7 +243,10 @@ public class MainActivity extends AppCompatActivity {
     public void DisplayMotorStatus(){
 
         for(int i=1;i<=12;i++) {
-            if (xmlMotor[i].getLastValue().equals("3")) {
+
+            if(xmlMotor[i].getLastValue()==null){
+                mAerator[i].setBackgroundColor(Color.WHITE);
+            }else if (xmlMotor[i].getLastValue().equals("3")) {
                 mAerator[i].setBackgroundColor(Color.argb(255, 0, 150, 0));
             } else if (xmlMotor[i].getLastValue().equals("5")) {
                 if (xmlMotor[i].getDetails().equals("must_off"))
@@ -286,9 +289,10 @@ public class MainActivity extends AppCompatActivity {
     public void LaunchGraph(View view) {
         //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
         String message = BaseURL[SelectedPond];
-        Intent intent = new Intent(this, GraphActivity.class);
+        Intent intent = new Intent(this, DailyGraphActivity.class);
         intent.putExtra("BASE_URL", message);
         intent.putExtra("SELECTED_POND", SelectedPond);
+        intent.putExtra("GRAPH_GROUP" , "DO_LEVEL");
         startActivity(intent);
     }
 
@@ -303,12 +307,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchDailyGraph(View view) {
         String message = BaseURL[SelectedPond];
-        String graphSeries = new String("DO_PROBE");
+        String graphGroup = new String("DO_PROBE");
 
         Intent intent = new Intent(this, DailyGraphActivity.class);
         intent.putExtra("BASE_URL", message);
         intent.putExtra("SELECTED_POND", SelectedPond);
-        intent.putExtra("GRAPH_SERIES", graphSeries);
+        intent.putExtra("GRAPH_GROUP" , new String("DO_PROBE"));
         startActivity(intent);
     }
 
@@ -343,15 +347,15 @@ public class MainActivity extends AppCompatActivity {
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
         ProgressDialog progressDialog;
-        boolean cancle;
+        boolean cancel;
 
         // Show Progress bar before downloading Music
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Shows Progress Bar Dialog and then call doInBackground method
-            //showDialog(progress_bar_type);
-            cancle = false;
+
+            cancel = false;
 
             progressDialog = ProgressDialog.show(MainActivity.this,
                     "Downloading Data",
@@ -361,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    cancle = true;
+                    cancel = true;
                 }
             });
 

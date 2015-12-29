@@ -23,6 +23,7 @@ import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -47,11 +48,12 @@ public class DailyGraphFragment extends Fragment {
     private String mParam2;
 
     Date date = new Date();
-    String mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
+    String mStrSelectedDay;
+            //= new SimpleDateFormat("yyyy-MM-dd").format(date);
 
     private String mBaseUrl;
     private int mSelectedPond;
-    private String mGraphSeries;
+    private String mStrGraphGroup;
 
     private OnFragmentInteractionListener mListener;
 
@@ -66,6 +68,8 @@ public class DailyGraphFragment extends Fragment {
 
     private SensorDailyDataXML sensorXml1;
     private SensorDailyDataXML sensorXml2;
+
+
 
 
     public DailyGraphFragment() {
@@ -98,7 +102,7 @@ public class DailyGraphFragment extends Fragment {
             //mParam2 = getArguments().getString(ARG_PARAM2);
             mBaseUrl = getArguments().getString("BASE_URL");
             mSelectedPond = getArguments().getInt("SELECTED_POND", 0);
-            mGraphSeries = getArguments().getString("GRAPH_SERIES");
+            mStrGraphGroup = getArguments().getString("GRAPH_GROUP");
 
         }
     }
@@ -111,8 +115,8 @@ public class DailyGraphFragment extends Fragment {
 
         mGraphView = (GraphView) rootView.findViewById(R.id.graph);
 
-        setGraphFormat();
-        updateGraph();
+        //setGraphFormat();
+        //updateGraph();
 
         // Inflate the layout for this fragment
         return rootView;
@@ -242,6 +246,10 @@ public class DailyGraphFragment extends Fragment {
         mStrSelectedDay = date_str;
     }
 
+    void setGraphGroup(String group_str) {
+        mStrGraphGroup = group_str;
+    }
+
     void updateGraph() {
 
         DownloadFromInternet Downloader = new DownloadFromInternet();
@@ -283,18 +291,27 @@ public class DailyGraphFragment extends Fragment {
             int count=1;
             try {
                 DataPoint[] dataPoint;
-                String finalUrl;
+                String finalUrl1,finalUrl2;
                 String io_number = str[0];
                 String date_str = str[1];
 
-                finalUrl = mBaseUrl+",4096,"+io_number+","+date_str;
-                sensorXml1 = new SensorDailyDataXML(finalUrl);
-                sensorXml1.fetchXML(finalUrl);
+
+                if (mStrGraphGroup.equals("DO_PROBE")) {
+                    finalUrl1 = mBaseUrl + ",4096," + "100" + "," + date_str;
+                    finalUrl2 = mBaseUrl + ",4096," + "101" + "," + date_str;
+                } else {
+                    finalUrl1 = mBaseUrl + ",4096," + "1505" + "," + date_str;
+                    finalUrl2 = mBaseUrl + ",4096," + "1506" + "," + date_str;
+                }
 
 
-                finalUrl = mBaseUrl+",4096,"+"101"+","+date_str;
-                sensorXml2 = new SensorDailyDataXML(finalUrl);
-                sensorXml2.fetchXML(finalUrl);
+                sensorXml1 = new SensorDailyDataXML(finalUrl1);
+                sensorXml1.fetchXML(finalUrl1);
+
+
+
+                sensorXml2 = new SensorDailyDataXML(finalUrl2);
+                sensorXml2.fetchXML(finalUrl2);
 
                 while (!sensorXml1.isFetchComplete()){
                     // Publish the progress which triggers onProgressUpdate method
@@ -333,5 +350,45 @@ public class DailyGraphFragment extends Fragment {
 
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("STR_SELECTED_DAY", mStrSelectedDay);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState!=null) {
+            mStrSelectedDay = savedInstanceState.getString("STR_SELECTED_DAY");
+            //setGraphFormat();
+            //updateSeriesData();
+        }
+        if (mStrSelectedDay==null) {
+            mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            //setGraphFormat();
+            //updateGraph();
+        }
+        setGraphFormat();
+        updateGraph();
+
+
+
+    }
+
+    public static Date convertStringToDate(String date) {
+        SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+        if (date != null) {
+            try {
+                return FORMATTER.parse(date);
+            } catch (ParseException e) {
+                // nothing we can do if the input is invalid
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 }

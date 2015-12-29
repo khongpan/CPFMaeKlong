@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HandleXML {
+public class SyslogXML {
     private String strName = " ";
     private String strNote = " ";
     private String LastValue = "-";
@@ -19,7 +19,7 @@ public class HandleXML {
     private String[] ValueY = new String[300] ;
     private XmlPullParserFactory xmlFactoryObject;
     public volatile boolean parsingComplete = false;
-    public HandleXML(String url){
+    public SyslogXML(String url){
         this.urlString = url;
     }
     public String getLastValue(){

@@ -7,8 +7,8 @@ android {
         applicationId "com.smn.cpfmaeklong"
         minSdkVersion 10
         targetSdkVersion 17
-        versionCode 7
-        versionName '0.07'
+        versionCode 8
+        versionName '0.08'
     }
     buildTypes {
         release {

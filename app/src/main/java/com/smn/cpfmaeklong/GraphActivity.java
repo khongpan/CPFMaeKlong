@@ -4,16 +4,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.jjoe64.graphview.GraphView;
@@ -25,8 +22,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class GraphActivity extends AppCompatActivity {
     Date date = new Date();
@@ -152,7 +147,7 @@ public class GraphActivity extends AppCompatActivity {
     public void ShowGraph() {
         //String url = "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL,";
         String url = BaseURL;
-        HandleXML obj;
+        SyslogXML obj;
 
         String strDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
@@ -164,7 +159,7 @@ public class GraphActivity extends AppCompatActivity {
             if(SelectedPond==1){
                 finalUrl = url + ",8192,100,"+ strDay;
             }
-            obj = new HandleXML(finalUrl);
+            obj = new SyslogXML(finalUrl);
             obj.fetchXML();
             while (!obj.parsingComplete) ;
 
@@ -185,7 +180,7 @@ public class GraphActivity extends AppCompatActivity {
             if(SelectedPond==1){
                 finalUrl = url + ",8192,100,"+ strDay;
             }
-            obj = new HandleXML(finalUrl);
+            obj = new SyslogXML(finalUrl);
             obj.fetchXML();
             while (!obj.parsingComplete) ;
             DataPoint[] values = new DataPoint[obj.countRecord];
