@@ -203,7 +203,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             mSeries[i] = new RainbowLineGraphSeries<DataPoint>();
             //mSeries[i].setTitle("series 1");
             mSeries[i].setColor(Color.BLUE);
-            mSeries[i].setThickness(3);
+            mSeries[i].setThickness(5);
             mSeries[i].setOffset(i + 1);
             mSeries[i].setFlatLine(true);
             mSeries[i].setLevelColor(mStateColor);
