@@ -1,45 +1,50 @@
 package com.smn.cpfmaeklong;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+/**
+ * Created by Mink on 12/30/2015.
+ */
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.helper.StaticLabelsFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+        import android.app.Dialog;
+        import android.app.ProgressDialog;
+        import android.content.Context;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.graphics.Color;
+        import android.net.ConnectivityManager;
+        import android.net.NetworkInfo;
+        import android.net.Uri;
+        import android.os.AsyncTask;
+        import android.os.Bundle;
+        import android.os.Handler;
+        import android.support.v4.app.Fragment;
+        import android.util.Log;
+        import android.view.LayoutInflater;
+        import android.view.View;
+        import android.view.ViewGroup;
+        import android.widget.Toast;
+
+        import com.jjoe64.graphview.GraphView;
+        import com.jjoe64.graphview.LegendRenderer;
+        import com.jjoe64.graphview.helper.StaticLabelsFormatter;
+        import com.jjoe64.graphview.series.DataPoint;
+        import com.jjoe64.graphview.series.LineGraphSeries;
+
+        import java.text.ParseException;
+        import java.text.SimpleDateFormat;
+        import java.util.Date;
 
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link DailyGraphFragment.OnFragmentInteractionListener} interface
+ * {@link AeratorDailyGraphFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link DailyGraphFragment#newInstance} factory method to
+ * Use the {@link AeratorDailyGraphFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DailyGraphFragment extends Fragment {
+public class AeratorDailyGraphFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -49,9 +54,10 @@ public class DailyGraphFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private static final int MAX_AERATOR = 12;
+
     Date date = new Date();
     String mStrSelectedDay;
-            //= new SimpleDateFormat("yyyy-MM-dd").format(date);
 
     private String mBaseUrl;
     private int mSelectedPond;
@@ -59,22 +65,25 @@ public class DailyGraphFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private final Handler mHandler = new Handler();
-    private Runnable mTimer1;
-    private Runnable mTimer2;
-
-    private LineGraphSeries<DataPoint> mSeries1;
-    private RainbowLineGraphSeries<DataPoint> mSeries2;
     private GraphView mGraphView;
 
+    private RainbowLineGraphSeries[] mSeries = new RainbowLineGraphSeries[MAX_AERATOR];
 
-    private SensorDailyDataXML sensorXml1;
-    private SensorDailyDataXML sensorXml2;
+    private SensorDailyDataXML[] sensorXml = new SensorDailyDataXML[MAX_AERATOR];
+
+    DataPoint[] mStateColor = new DataPoint[] {
+        new DataPoint(0, Color.RED),
+        new DataPoint(3, Color.GREEN),
+        new DataPoint(4, Color.RED),
+        new DataPoint(5, Color.BLACK),
+        new DataPoint(6, Color.RED)
+    };
 
 
 
 
-    public DailyGraphFragment() {
+
+    public AeratorDailyGraphFragment() {
         // Required empty public constructor
     }
 
@@ -84,11 +93,11 @@ public class DailyGraphFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment DailyGraphFragment.
+     * @return A new instance of fragment AeratorDailyGraphFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static DailyGraphFragment newInstance(String param1, String param2) {
-        DailyGraphFragment fragment = new DailyGraphFragment();
+    public static AeratorDailyGraphFragment newInstance(String param1, String param2) {
+        AeratorDailyGraphFragment fragment = new AeratorDailyGraphFragment();
         Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, param1);
         //args.putString(ARG_PARAM2, param2);
@@ -116,9 +125,6 @@ public class DailyGraphFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_daily_graph, container, false);
 
         mGraphView = (GraphView) rootView.findViewById(R.id.graph);
-
-        //setGraphFormat();
-        //updateGraph();
 
         // Inflate the layout for this fragment
         return rootView;
@@ -173,9 +179,6 @@ public class DailyGraphFragment extends Fragment {
     }
 
     public void setGraphFormat() {
-        //mGraphView.getLegendRenderer().setVisible(true);
-        //mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
-        //mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
         mGraphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
 
@@ -195,55 +198,35 @@ public class DailyGraphFragment extends Fragment {
         staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
-        mSeries1 = new LineGraphSeries<DataPoint>();
-        mSeries2 = new RainbowLineGraphSeries<DataPoint>();
 
-        mSeries1.setTitle("series 1");
-        mSeries1.setColor(Color.BLUE);
-        mSeries1.setThickness(2);
-
-        mSeries2.setTitle("series 2");
-        mSeries2.setColor(Color.RED);
-        mSeries2.setThickness(2);
-
-        mGraphView.addSeries(mSeries1);
-        mGraphView.addSeries(mSeries2);
+        for (int i = 0; i < MAX_AERATOR; i++) {
+            mSeries[i] = new RainbowLineGraphSeries<DataPoint>();
+            //mSeries[i].setTitle("series 1");
+            mSeries[i].setColor(Color.BLUE);
+            mSeries[i].setThickness(2);
+            mSeries[i].setOffset(i + 1);
+            mSeries[i].setFlatLine(true);
+            mSeries[i].setLevelColor(mStateColor);
+            mGraphView.addSeries(mSeries[i]);
+        }
     }
 
     public void updateSeriesData() {
         {
+            for(int i=0;i<MAX_AERATOR;i++) {
+                DataPoint[] dataPoint;
+                dataPoint = new DataPoint[sensorXml[i].getCountRecord()];
 
-            DataPoint[] dataPoint;
-
-            dataPoint = new DataPoint[sensorXml1.getCountRecord()];
-
-            for (int i=0; i < sensorXml1.getCountRecord(); i++) {
-                DataPoint v = new DataPoint(i, sensorXml1.getDataValue(i));
-                dataPoint[i] = v;
+                for (int ii = 0; ii < sensorXml[i].getCountRecord(); ii++) {
+                    DataPoint v = new DataPoint(ii, sensorXml[i].getDataValue(ii));
+                    dataPoint[ii] = v;
+                }
+                mSeries[i].resetData(dataPoint);
+                mSeries[i].setTitle(sensorXml[i].getIoName());
             }
-            mSeries1.resetData(dataPoint);
-
         }
 
-        {
-
-            DataPoint[] dataPoint;
-
-            dataPoint = new DataPoint[sensorXml2.getCountRecord()];
-
-            for (int i=0; i <sensorXml2.getCountRecord(); i++) {
-                DataPoint v = new DataPoint(i, sensorXml2.getDataValue(i));
-                dataPoint[i] = v;
-            }
-            mSeries2.resetData(dataPoint);
-
-        }
-
-        mSeries1.setTitle(sensorXml1.getIoName());
-        mSeries2.setTitle(sensorXml2.getIoName());
-
-
-        mGraphView.getLegendRenderer().setVisible(true);
+        mGraphView.getLegendRenderer().setVisible(false);
         mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
         mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
@@ -313,41 +296,32 @@ public class DailyGraphFragment extends Fragment {
         @Override
         protected String doInBackground(String... str) {
             int count=1;
+            DataPoint[] dataPoint;
+            String finalUrl;
+            String io_number_str = str[0];
+            String date_str = str[1];
+            int io_number=1560;
+            boolean loading_complete;
+
             try {
-                DataPoint[] dataPoint;
-                String finalUrl1,finalUrl2;
-                String io_number = str[0];
-                String date_str = str[1];
 
+                for (int i=0;i<MAX_AERATOR;i++) {
+                    finalUrl = mBaseUrl + ",4096," + io_number + "," + date_str;
+                    io_number++;
 
-                if (mStrGraphGroup.equals("DO_PROBE")) {
-                    finalUrl1 = mBaseUrl + ",4096," + "100" + "," + date_str;
-                    finalUrl2 = mBaseUrl + ",4096," + "101" + "," + date_str;
-                } else {
-                    finalUrl1 = mBaseUrl + ",4096," + "1505" + "," + date_str;
-                    finalUrl2 = mBaseUrl + ",4096," + "1506" + "," + date_str;
+                    sensorXml[i] = new SensorDailyDataXML(finalUrl);
+                    sensorXml[i].fetchXML(finalUrl);
                 }
 
-
-                sensorXml1 = new SensorDailyDataXML(finalUrl1);
-                sensorXml1.fetchXML(finalUrl1);
-
-
-
-                sensorXml2 = new SensorDailyDataXML(finalUrl2);
-                sensorXml2.fetchXML(finalUrl2);
-
-                while (!sensorXml1.isFetchComplete()){
-                    // Publish the progress which triggers onProgressUpdate method
-                    Thread.sleep(1000);
+                do {
+                    loading_complete=true;
+                    for(int i=0;i<MAX_AERATOR;i++) {
+                        loading_complete = loading_complete && sensorXml[i].isFetchComplete();
+                    }
+                        // Publish the progress which triggers onProgressUpdate method
                     publishProgress("" + count++);
-
-
-                }
-                while (!sensorXml2.isFetchComplete());
-
-
-
+                    if (!loading_complete) Thread.sleep(1000);
+                } while (!loading_complete);
 
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
@@ -359,7 +333,7 @@ public class DailyGraphFragment extends Fragment {
         @Override
         protected void onProgressUpdate(String... progress) {
             // Set progress percentage
-            progressDialog.setMessage("Please wait... "+String.valueOf(progress[0])+" sec");
+            progressDialog.setMessage("Please wait... " + String.valueOf(progress[0]) + " sec");
         }
 
         // Once XML is downloaded
@@ -416,3 +390,4 @@ public class DailyGraphFragment extends Fragment {
         return null;
     }
 }
+

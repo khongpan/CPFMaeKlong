@@ -2,6 +2,7 @@ package com.smn.cpfmaeklong;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,6 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 public class DailyGraphActivity extends AppCompatActivity
         implements DailyGraphFragment.OnFragmentInteractionListener,
+        AeratorDailyGraphFragment.OnFragmentInteractionListener,
         DateNavigateFragment.OnDateNavigateFragmentInteractionListener {
 
     private String mBaseUrl;
@@ -47,7 +49,16 @@ public class DailyGraphActivity extends AppCompatActivity
         if (findViewById(R.id.frDailyGraph) != null) {
 
             // Create a new Fragment to be placed in the activity layout
-            DailyGraphFragment dailyGraphFragment = new DailyGraphFragment();
+            //DailyGraphFragment dailyGraphFragment = new DailyGraphFragment();
+
+            Fragment dailyGraphFragment;
+
+            if (mGraphGroup.equals("AERATOR_STATUS")) {
+               dailyGraphFragment = new AeratorDailyGraphFragment();
+            } else {
+                dailyGraphFragment = new DailyGraphFragment();
+            }
+
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -85,18 +96,31 @@ public class DailyGraphActivity extends AppCompatActivity
 
     @Override
     public void onDateNavigateFragmentInteraction(String date) {
-        DailyGraphFragment dailyGraphFragment = (DailyGraphFragment)
-                getSupportFragmentManager().findFragmentById(R.id.frDailyGraph);
 
         mCurrentDate=date;
 
-        if (dailyGraphFragment != null) {
-            // If article frag is available, we're in two-pane layout...
+        if (mGraphGroup.equals("AERATOR_STATUS")) {
+            AeratorDailyGraphFragment dailyGraphFragment = (AeratorDailyGraphFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.frDailyGraph);
 
-            // Call a method in the ArticleFragment to update its content
-            dailyGraphFragment.setDate(mCurrentDate);
-            dailyGraphFragment.setGraphGroup(mGraphGroup);
-            dailyGraphFragment.updateGraph();
+            if (dailyGraphFragment != null) {
+                // If article frag is available, we're in two-pane layout...
+                // Call a method in the ArticleFragment to update its content
+                dailyGraphFragment.setDate(mCurrentDate);
+                dailyGraphFragment.setGraphGroup(mGraphGroup);
+                dailyGraphFragment.updateGraph();
+            }
+        } else {
+            DailyGraphFragment dailyGraphFragment = (DailyGraphFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.frDailyGraph);
+
+            if (dailyGraphFragment != null) {
+                // If article frag is available, we're in two-pane layout...
+                // Call a method in the ArticleFragment to update its content
+                dailyGraphFragment.setDate(mCurrentDate);
+                dailyGraphFragment.setGraphGroup(mGraphGroup);
+                dailyGraphFragment.updateGraph();
+            }
         }
     }
 

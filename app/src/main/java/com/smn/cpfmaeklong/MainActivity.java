@@ -165,6 +165,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            mBtnUsableMotor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v){
+                    launchAeratorGraph(v);
+                }
+
+
+        });
+
 
             mAerator[1].setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -319,6 +328,17 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("BASE_URL", message);
         intent.putExtra("SELECTED_POND", SelectedPond);
         intent.putExtra("GRAPH_GROUP" , new String("DO_PROBE"));
+        startActivity(intent);
+    }
+
+    public void launchAeratorGraph(View view) {
+        String message = BaseURL[SelectedPond];
+        String graphGroup = new String("DO_PROBE");
+
+        Intent intent = new Intent(this, DailyGraphActivity.class);
+        intent.putExtra("BASE_URL", message);
+        intent.putExtra("SELECTED_POND", SelectedPond);
+        intent.putExtra("GRAPH_GROUP" , new String("AERATOR_STATUS"));
         startActivity(intent);
     }
 

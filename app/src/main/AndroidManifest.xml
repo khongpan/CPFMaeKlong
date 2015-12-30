@@ -28,7 +28,7 @@
                 android:value="com.smn.cpfmaeklong.MainActivity" />
         </activity>
         <activity
-            android:name=".GridActivity"
+            android:name=".SyslogActivity"
             android:label="@string/title_activity_grid"
             android:parentActivityName=".MainActivity">
             <meta-data
