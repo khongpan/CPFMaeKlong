@@ -91,12 +91,13 @@ public class MainActivity extends AppCompatActivity {
         mAerator[11] = (TextView) findViewById(R.id.btM11);
         mAerator[12] = (TextView) findViewById(R.id.btM12);
 
-        ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo nInfo = cManager.getActiveNetworkInfo();
+        //ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        //NetworkInfo nInfo = cManager.getActiveNetworkInfo();
 
-        if(nInfo==null) {
-            Toast.makeText(this, "No Internet connection! Please connect to the Internet.", Toast.LENGTH_LONG).show();
-        }else {
+        //if(nInfo==null) {
+        //   Toast.makeText(this, "No Internet connection! Please connect to the Internet.", Toast.LENGTH_LONG).show();
+        //}else
+        {
             Spinner spntype = (Spinner) findViewById(R.id.spnPond);
             strPondsName = getResources().getStringArray(R.array.type);
             ArrayAdapter<String> objAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strPondsName);
@@ -272,6 +273,8 @@ public class MainActivity extends AppCompatActivity {
             "OverCurrent","UnderCurrent","InternalErr","CommError","LastState"
         };
 
+        if (xmlMotor[mNo]==null) return;
+
         if (xmlMotor[mNo].getLastValue().equals("-")) return;
 
         int state = Integer.parseInt(xmlMotor[mNo].getLastValue());
@@ -282,8 +285,11 @@ public class MainActivity extends AppCompatActivity {
 
     void updateView() {
 
-        DownloadFromInternet Downloader = new DownloadFromInternet();
-        Downloader.execute();
+        if (checkInternetConnection()==true) {
+
+            DownloadFromInternet downloader = new DownloadFromInternet();
+            downloader.execute();
+        }
     }
 
     public void LaunchGraph(View view) {
@@ -299,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
     public void LaunchGrid(View view) {
         //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
         String message = BaseURL[SelectedPond];
-        Intent intent = new Intent(this, GridActivity.class);
+        Intent intent = new Intent(this, SyslogActivity.class);
         intent.putExtra("BASE_URL", message);
         intent.putExtra("SELECTED_POND", SelectedPond);
         startActivity(intent);
@@ -342,6 +348,21 @@ public class MainActivity extends AppCompatActivity {
         SelectedPond = savedInstanceState.getInt("SelectedPond");
         if (SelectedPond>=BaseURL.length)
             SelectedPond=0;
+    }
+
+    public boolean checkInternetConnection() {
+
+        boolean have_connection = false;
+
+        ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cManager.getActiveNetworkInfo();
+
+        if(nInfo==null) {
+            Toast.makeText(this, "No Internet connection! Please connect to the Internet.", Toast.LENGTH_LONG).show();
+        } else {
+            have_connection=true;
+        }
+        return have_connection;
     }
 
     // Async Task Class

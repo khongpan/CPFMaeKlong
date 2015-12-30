@@ -1,8 +1,11 @@
 package com.smn.cpfmaeklong;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,7 +32,7 @@ import java.util.HashMap;
 
 import static com.smn.cpfmaeklong.R.layout.activity_column;
 
-public class GridActivity extends AppCompatActivity {
+public class SyslogActivity extends AppCompatActivity {
     ListView lv;
     TextView dt;
     EditText keysch;
@@ -59,7 +62,7 @@ public class GridActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grid);
+        setContentView(R.layout.activity_syslog);
 
         Intent intent = getIntent();
         BaseURL = intent.getStringExtra("BASE_URL");
@@ -132,6 +135,8 @@ public class GridActivity extends AppCompatActivity {
     }
 
     private void updateSyslog() {
+
+        if (checkInternetConnection()==false) return;
         DownloadFromInternet Downloader = new DownloadFromInternet();
         Downloader.execute();
     }
@@ -180,7 +185,7 @@ public class GridActivity extends AppCompatActivity {
                 MyArrList.add(map);
             }
             SimpleAdapter sAdap;
-            sAdap = new SimpleAdapter(GridActivity.this, MyArrList, activity_column,
+            sAdap = new SimpleAdapter(SyslogActivity.this, MyArrList, activity_column,
                     new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
             lv.setAdapter(sAdap);
 
@@ -270,13 +275,26 @@ public class GridActivity extends AppCompatActivity {
             }
         }
         SimpleAdapter sAdap;
-        sAdap = new SimpleAdapter(GridActivity.this, MyArrList, activity_column,
+        sAdap = new SimpleAdapter(SyslogActivity.this, MyArrList, activity_column,
                 new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
         lv.setAdapter(sAdap);
 
     }
 
+    public boolean checkInternetConnection() {
 
+        boolean have_connection = false;
+
+        ConnectivityManager cManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cManager.getActiveNetworkInfo();
+
+        if(nInfo==null) {
+            Toast.makeText(this , "No Internet connection! Please connect to the Internet.", Toast.LENGTH_LONG).show();
+        } else {
+            have_connection=true;
+        }
+        return have_connection;
+    }
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
         ProgressDialog progressDialog;
@@ -290,7 +308,7 @@ public class GridActivity extends AppCompatActivity {
 
             cancel = false;
 
-            progressDialog = ProgressDialog.show(GridActivity.this,
+            progressDialog = ProgressDialog.show(SyslogActivity.this,
                     "Downloading Data",
                     "Please Wait!");
 
@@ -342,7 +360,7 @@ public class GridActivity extends AppCompatActivity {
 
             progressDialog.dismiss();
             if (objs.getCountRecord() == 0) {
-                Toast.makeText(GridActivity.this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
+                Toast.makeText(SyslogActivity.this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
             } else {
                 final String[] time = new String[objs.getCountRecord()];
                 final String[] data = new String[objs.getCountRecord()];
@@ -363,7 +381,7 @@ public class GridActivity extends AppCompatActivity {
                     MyArrList.add(map);
                 }
                 SimpleAdapter sAdap;
-                sAdap = new SimpleAdapter(GridActivity.this, MyArrList, activity_column,
+                sAdap = new SimpleAdapter(SyslogActivity.this, MyArrList, activity_column,
                         new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
                 lv.setAdapter(sAdap);
 

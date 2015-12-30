@@ -13,12 +13,12 @@ import java.net.URL;
 public class SensorInfoXML {
     private String mStrUrl=null;
 
-    private String mStrName;
-    private String mStrType;
-    private String mStrUnit;
-    private String mStrIoDateTime;
-    private String mStrLastValue;
-    private String mStrDetails;
+    private String mStrName="-";
+    private String mStrType="-";
+    private String mStrUnit="-";
+    private String mStrIoDateTime="-";
+    private String mStrLastValue="-";
+    private String mStrDetails="-";
 
 
 

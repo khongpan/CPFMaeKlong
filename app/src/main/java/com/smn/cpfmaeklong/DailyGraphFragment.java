@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,7 +28,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
+
 
 
 /**
@@ -171,9 +173,9 @@ public class DailyGraphFragment extends Fragment {
     }
 
     public void setGraphFormat() {
-        mGraphView.getLegendRenderer().setVisible(true);
-        mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
-        mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        //mGraphView.getLegendRenderer().setVisible(true);
+        //mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
+        //mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
         mGraphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
 
@@ -240,6 +242,11 @@ public class DailyGraphFragment extends Fragment {
         mSeries1.setTitle(sensorXml1.getIoName());
         mSeries2.setTitle(sensorXml2.getIoName());
 
+
+        mGraphView.getLegendRenderer().setVisible(true);
+        mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
+        mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
     }
 
     void setDate(String date_str) {
@@ -250,7 +257,24 @@ public class DailyGraphFragment extends Fragment {
         mStrGraphGroup = group_str;
     }
 
+    public boolean checkInternetConnection() {
+
+        boolean have_connection = false;
+
+        ConnectivityManager cManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cManager.getActiveNetworkInfo();
+
+        if(nInfo==null) {
+            Toast.makeText(getActivity() , "No Internet connection! Please connect to the Internet.", Toast.LENGTH_LONG).show();
+        } else {
+            have_connection=true;
+        }
+        return have_connection;
+    }
+
     void updateGraph() {
+
+        if (checkInternetConnection()==false) return;
 
         DownloadFromInternet Downloader = new DownloadFromInternet();
         Downloader.execute("100", mStrSelectedDay);
