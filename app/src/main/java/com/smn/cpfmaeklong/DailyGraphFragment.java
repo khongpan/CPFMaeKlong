@@ -64,7 +64,7 @@ public class DailyGraphFragment extends Fragment {
     private Runnable mTimer2;
 
     private LineGraphSeries<DataPoint> mSeries1;
-    private RainbowLineGraphSeries<DataPoint> mSeries2;
+    private LineGraphSeries<DataPoint> mSeries2;
     private GraphView mGraphView;
 
 
@@ -196,7 +196,7 @@ public class DailyGraphFragment extends Fragment {
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
         mSeries1 = new LineGraphSeries<DataPoint>();
-        mSeries2 = new RainbowLineGraphSeries<DataPoint>();
+        mSeries2 = new LineGraphSeries<DataPoint>();
 
         mSeries1.setTitle("series 1");
         mSeries1.setColor(Color.BLUE);
