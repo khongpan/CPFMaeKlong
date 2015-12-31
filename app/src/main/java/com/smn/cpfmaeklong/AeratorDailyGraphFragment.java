@@ -5,18 +5,15 @@ package com.smn.cpfmaeklong;
  */
 
 
-        import android.app.Dialog;
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.DialogInterface;
-        import android.content.Intent;
         import android.graphics.Color;
         import android.net.ConnectivityManager;
         import android.net.NetworkInfo;
         import android.net.Uri;
         import android.os.AsyncTask;
         import android.os.Bundle;
-        import android.os.Handler;
         import android.support.v4.app.Fragment;
         import android.util.Log;
         import android.view.LayoutInflater;
@@ -68,8 +65,10 @@ public class AeratorDailyGraphFragment extends Fragment {
     private GraphView mGraphView;
 
     private RainbowLineGraphSeries[] mSeries = new RainbowLineGraphSeries[MAX_AERATOR];
+    private LineGraphSeries mOnAeratorCountSeries;
 
-    private SensorDailyDataXML[] sensorXml = new SensorDailyDataXML[MAX_AERATOR];
+    private SensorDailyDataXML[] mAeratorXml = new SensorDailyDataXML[MAX_AERATOR];
+    private SensorDailyDataXML mOnMotorCountXml;
 
     DataPoint[] mStateColor = new DataPoint[] {
         new DataPoint(0, Color.RED),
@@ -203,32 +202,44 @@ public class AeratorDailyGraphFragment extends Fragment {
             mSeries[i] = new RainbowLineGraphSeries<DataPoint>();
             //mSeries[i].setTitle("series 1");
             mSeries[i].setColor(Color.BLUE);
-            mSeries[i].setThickness(5);
+            mSeries[i].setThickness(7);
             mSeries[i].setOffset(i + 1);
             mSeries[i].setFlatLine(true);
             mSeries[i].setLevelColor(mStateColor);
             mGraphView.addSeries(mSeries[i]);
         }
+        mOnAeratorCountSeries = new LineGraphSeries<DataPoint>();
+        mOnAeratorCountSeries.setThickness(5);
+        mOnAeratorCountSeries.setColor(Color.MAGENTA);
+        mGraphView.addSeries(mOnAeratorCountSeries);
     }
 
     public void updateSeriesData() {
-        {
-            for(int i=0;i<MAX_AERATOR;i++) {
-                DataPoint[] dataPoint;
-                dataPoint = new DataPoint[sensorXml[i].getCountRecord()];
+        DataPoint[] dataPoint;
+        for(int i=0;i<MAX_AERATOR;i++) {
 
-                for (int ii = 0; ii < sensorXml[i].getCountRecord(); ii++) {
-                    DataPoint v = new DataPoint(ii, sensorXml[i].getDataValue(ii));
-                    dataPoint[ii] = v;
-                }
-                mSeries[i].resetData(dataPoint);
-                mSeries[i].setTitle(sensorXml[i].getIoName());
+
+            dataPoint = new DataPoint[mAeratorXml[i].getCountRecord()];
+
+            for (int ii = 0; ii < mAeratorXml[i].getCountRecord(); ii++) {
+                DataPoint v = new DataPoint(ii, mAeratorXml[i].getDataValue(ii));
+                dataPoint[ii] = v;
             }
+            mSeries[i].resetData(dataPoint);
+            //mSeries[i].setTitle(mAeratorXml[i].getIoName());
         }
 
-        mGraphView.getLegendRenderer().setVisible(false);
-        mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
-        mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        dataPoint = new DataPoint[mOnMotorCountXml.getCountRecord()];
+        for(int ii=0;ii<mOnMotorCountXml.getCountRecord();ii++) {
+            DataPoint v = new DataPoint(ii, mOnMotorCountXml.getDataValue(ii)+0.3);
+            dataPoint[ii] = v;
+        }
+        mOnAeratorCountSeries.resetData(dataPoint);
+        mOnAeratorCountSeries.setTitle(mOnMotorCountXml.getIoName());
+
+        //mGraphView.getLegendRenderer().setVisible(true);
+        //mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
+        //mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
     }
 
@@ -309,16 +320,21 @@ public class AeratorDailyGraphFragment extends Fragment {
                     finalUrl = mBaseUrl + ",4096," + io_number + "," + date_str;
                     io_number++;
 
-                    sensorXml[i] = new SensorDailyDataXML(finalUrl);
-                    sensorXml[i].fetchXML(finalUrl);
+                    mAeratorXml[i] = new SensorDailyDataXML(finalUrl);
+                    mAeratorXml[i].fetchXML(finalUrl);
                 }
+                finalUrl = mBaseUrl + ",4096," + "1506" + "," + date_str;
+                mOnMotorCountXml = new SensorDailyDataXML(finalUrl);
+                mOnMotorCountXml.fetchXML(finalUrl);
 
                 do {
                     loading_complete=true;
                     for(int i=0;i<MAX_AERATOR;i++) {
-                        loading_complete = loading_complete && sensorXml[i].isFetchComplete();
+                        loading_complete = loading_complete && mAeratorXml[i].isFetchComplete();
                     }
-                        // Publish the progress which triggers onProgressUpdate method
+                    loading_complete = loading_complete && mOnMotorCountXml.isFetchComplete();
+
+                    // Publish the progress which triggers onProgressUpdate method
                     publishProgress("" + count++);
                     if (!loading_complete) Thread.sleep(1000);
                 } while (!loading_complete);
