@@ -21,10 +21,12 @@ import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,8 +52,7 @@ public class DailyGraphFragment extends Fragment {
     private String mParam2;
 
     Date date = new Date();
-    String mStrSelectedDay;
-            //= new SimpleDateFormat("yyyy-MM-dd").format(date);
+    String mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
     private String mBaseUrl;
     private int mSelectedPond;
@@ -172,7 +173,7 @@ public class DailyGraphFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void setGraphFormat() {
+    public void formatPlotArea() {
         //mGraphView.getLegendRenderer().setVisible(true);
         //mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
         //mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
@@ -188,15 +189,40 @@ public class DailyGraphFragment extends Fragment {
         mGraphView.getViewport().setMinY(0);
         mGraphView.getViewport().setMaxY(16);
 
-        mGraphView.getViewport().setScrollable(true);
+        //mGraphView.getViewport().setScrollable(true);
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mGraphView);
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
         staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        //mGraphView.getGridLabelRenderer().setNumVerticalLabels(5);
+        //mGraphView.getGridLabelRenderer().setNumHorizontalLabels(9);
+/*
+        // set date label formatter
+        DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
+        mGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), df));
+        mGraphView.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+*/
 
-        mSeries1 = new LineGraphSeries<DataPoint>();
-        mSeries2 = new LineGraphSeries<DataPoint>();
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mGraphView.getViewport().setMinX(start_time.getTime());
+        mGraphView.getViewport().setMaxX(end_time.getTime());
+        mGraphView.getViewport().setXAxisBoundsManual(true);
+
+
+        mSeries1 = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
+        mSeries2 = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
 
         mSeries1.setTitle("series 1");
         mSeries1.setColor(Color.BLUE);
@@ -214,38 +240,86 @@ public class DailyGraphFragment extends Fragment {
         {
 
             DataPoint[] dataPoint;
+            int data_count=sensorXml1.getCountRecord();
 
-            dataPoint = new DataPoint[sensorXml1.getCountRecord()];
+            if (data_count>0) {
+                dataPoint = new DataPoint[sensorXml1.getCountRecord()];
+                for (int i = 0; i < sensorXml1.getCountRecord(); i++) {
+                    DataPoint v = new DataPoint(sensorXml1.getDataTimeStamp(i), sensorXml1.getDataValue(i));
+                    dataPoint[i] = v;
+                }
+                if (dataPoint == null)
+                    dataPoint = new DataPoint[]{new DataPoint(0, 0), new DataPoint(0, 0)};
 
-            for (int i=0; i < sensorXml1.getCountRecord(); i++) {
-                DataPoint v = new DataPoint(i, sensorXml1.getDataValue(i));
-                dataPoint[i] = v;
+            } else {
+                dataPoint = new DataPoint[] {new DataPoint(0,0)};
             }
             mSeries1.resetData(dataPoint);
-
         }
 
         {
-
             DataPoint[] dataPoint;
+            int data_count=sensorXml2.getCountRecord();
 
-            dataPoint = new DataPoint[sensorXml2.getCountRecord()];
+            if (data_count>0) {
 
-            for (int i=0; i <sensorXml2.getCountRecord(); i++) {
-                DataPoint v = new DataPoint(i, sensorXml2.getDataValue(i));
-                dataPoint[i] = v;
+                dataPoint = new DataPoint[sensorXml2.getCountRecord()];
+
+
+                for (int i = 0; i < sensorXml2.getCountRecord(); i++) {
+                    DataPoint v = new DataPoint(sensorXml2.getDataTimeStamp(i), sensorXml2.getDataValue(i));
+                    dataPoint[i] = v;
+                }
+
+
+            } else {
+                dataPoint = new DataPoint[]{new DataPoint(0, 0), new DataPoint(0, 0)};
             }
             mSeries2.resetData(dataPoint);
-
         }
 
         mSeries1.setTitle(sensorXml1.getIoName());
         mSeries2.setTitle(sensorXml2.getIoName());
 
+        //mGraphView.removeAllSeries();
+        //mGraphView.addSeries(mSeries1);
+        //mGraphView.addSeries(mSeries2);
+
 
         mGraphView.getLegendRenderer().setVisible(true);
         mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
         mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+/*
+        // set date label formatter
+        DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
+        mGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), df));
+        mGraphView.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+*/
+
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mGraphView.getViewport().setMinX(start_time.getTime());
+        mGraphView.getViewport().setMaxX(end_time.getTime());
+        mGraphView.getViewport().setXAxisBoundsManual(true);
+        //mGraphView.getViewport().setScalable(true);
+        //mGraphView.getViewport().setScrollable(true);
+
+
+
+
+
+
 
     }
 
@@ -284,7 +358,7 @@ public class DailyGraphFragment extends Fragment {
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
         ProgressDialog progressDialog;
-        boolean cancle;
+        boolean cancel;
 
         // Show Progress bar before downloading Music
         @Override
@@ -292,7 +366,7 @@ public class DailyGraphFragment extends Fragment {
             super.onPreExecute();
             // Shows Progress Bar Dialog and then call doInBackground method
             //showDialog(progress_bar_type);
-            cancle = false;
+            cancel = false;
 
             progressDialog = ProgressDialog.show(getActivity(),
                     "Downloading Data",
@@ -302,7 +376,7 @@ public class DailyGraphFragment extends Fragment {
             progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    cancle = true;
+                    cancel = true;
                 }
             });
 
@@ -369,10 +443,7 @@ public class DailyGraphFragment extends Fragment {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
             progressDialog.dismiss();
-            // Play the music
             updateSeriesData();
-
-
         }
     }
 
@@ -388,19 +459,12 @@ public class DailyGraphFragment extends Fragment {
 
         if (savedInstanceState!=null) {
             mStrSelectedDay = savedInstanceState.getString("STR_SELECTED_DAY");
-            //setGraphFormat();
-            //updateSeriesData();
         }
         if (mStrSelectedDay==null) {
             mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-            //setGraphFormat();
-            //updateGraph();
         }
-        setGraphFormat();
+        formatPlotArea();
         updateGraph();
-
-
-
     }
 
     public static Date convertStringToDate(String date) {

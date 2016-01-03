@@ -95,6 +95,7 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
      * internal paint object
      */
     private Paint mPaint;
+    private Paint[] mLevelPaint;
 
     /**
      * paint for the background
@@ -117,7 +118,7 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
      */
     private Paint mCustomPaint;
 
-    protected E[] mLevelColor;
+    protected int[] mLevelColor;
 
     protected boolean mFlatLine;
 
@@ -195,6 +196,11 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
         mPaint.setColor(getColor());
         mPaintBackground.setColor(mStyles.backgroundColor);
 
+        for(int i=0;i<mLevelPaint.length;i++) {
+            mLevelPaint[i].setStrokeWidth(mStyles.thickness);
+            //mLevelPaint[i].setColor(getColor());
+        }
+
         Paint paint;
         if (mCustomPaint != null) {
             paint = mCustomPaint;
@@ -222,8 +228,9 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
         while (values.hasNext()) {
             E value = values.next();
 
-            double valY = value.getY() - minY;
-            if (mFlatLine) valY = mOffset - minY;
+            //double valY = value.getY() - minY;
+            //if (mFlatLine) valY = mOffset - minY;
+            double valY = mOffset - minY;
 
             double ratY = valY / diffY;
             double y = graphHeight * ratY;
@@ -284,7 +291,8 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
                 mPath.moveTo(startX, startY);
                 mPath.lineTo(endX, endY);
                 //canvas.drawPath(mPath, paint);
-                canvas.drawPath(mPath, getPaint(value));
+                //canvas.drawPath(mPath, getPaint(value));
+                canvas.drawPath(mPath,mLevelPaint[(int)value.getY()]);
                 if (mStyles.drawBackground) {
                     if (i==1) {
                         firstX = startX;
@@ -428,7 +436,9 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
 
     public Paint getPaint(E value) {
 
-        Paint paint = mPaint;
+
+
+        //Paint paint = mPaint;
 /*
         if (mLevelColor==null) return paint;
 
@@ -441,20 +451,26 @@ public class RainbowLineGraphSeries<E extends DataPointInterface> extends BaseSe
         }
 */
         if (value.getY() == 3) {
-            paint.setColor(Color.GREEN);
+            mPaint.setColor(0xff00AF00);
 
         } else if (value.getY() == 5) {
-            paint.setColor(Color.BLACK);
+            mPaint.setColor(Color.BLACK);
+
         } else {
-            paint.setColor(Color.RED);
+            mPaint.setColor(Color.RED);
         }
 
-        return paint;
+        return mPaint;
 
     }
 
-    public void setLevelColor(E[] level_color) {
+    public void setLevelColor(int[] level_color) {
         mLevelColor = level_color;
+        mLevelPaint = new Paint[level_color.length];
+        for (int i=0;i<level_color.length;i++) {
+            mLevelPaint[i] = new Paint(mPaint);
+            mLevelPaint[i].setColor(level_color[i]);
+        }
     }
 
     public void setOffset(float offset) {

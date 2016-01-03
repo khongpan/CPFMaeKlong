@@ -18,11 +18,15 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SensorDailyDataXML {
     private String strUrl=null;
     private String[] strDateTime =new String[288];
     private String[] strValue = new String[288];
+    private Date[] mDateTime = new Date[288];
     private String mIoName;
     private int iRecordCount;
 
@@ -58,6 +62,10 @@ public class SensorDailyDataXML {
 
     }
 
+    public Date getDataTimeStamp (int index) {
+        return mDateTime[index];
+    }
+
     public void parseXML(XmlPullParser myParser) {
         int event,i = 0;
         String text=null;
@@ -83,6 +91,7 @@ public class SensorDailyDataXML {
                                 break;
                             case "IODateTime":
                                 strDateTime[i] = text;
+                                mDateTime[i] = convertStringToDate(text);
                                 break;
                         }
                         break;
@@ -127,5 +136,18 @@ public class SensorDailyDataXML {
             }
         });
         thread.start();
+    }
+
+    public static Date convertStringToDate(String date) {
+        SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (date != null) {
+            try {
+                return FORMATTER.parse(date);
+            } catch (ParseException e) {
+                // nothing we can do if the input is invalid
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 }
