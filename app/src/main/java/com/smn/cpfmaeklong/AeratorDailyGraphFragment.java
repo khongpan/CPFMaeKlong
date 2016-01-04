@@ -64,12 +64,17 @@ public class AeratorDailyGraphFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private GraphView mGraphView;
+    private GraphView mUpperGraphView;
 
     private RainbowLineGraphSeries[] mSeries = new RainbowLineGraphSeries[MAX_AERATOR];
     private LineGraphSeries mOnAeratorCountSeries;
+    private LineGraphSeries mDoLevelSeries;
+    private LineGraphSeries mAvlAeratorSeries;
 
     private SensorDailyDataXML[] mAeratorXml = new SensorDailyDataXML[MAX_AERATOR];
     private SensorDailyDataXML mOnMotorCountXml;
+    private SensorDailyDataXML mDoLevelXml;
+    private SensorDailyDataXML mAvlAeratorXml;
 
     int [] mStateColor = new int[] {
             Color.GRAY,
@@ -128,9 +133,10 @@ public class AeratorDailyGraphFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_daily_graph, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_aerator_daily_graph, container, false);
 
-        mGraphView = (GraphView) rootView.findViewById(R.id.graph);
+        mGraphView = (GraphView) rootView.findViewById(R.id.fr_graph1);
+        mUpperGraphView = (GraphView) rootView.findViewById(R.id.fr_graph2);
 
         // Inflate the layout for this fragment
         return rootView;
@@ -186,8 +192,9 @@ public class AeratorDailyGraphFragment extends Fragment {
 
     public void formatPlotArea() {
 
-        mGraphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
+        mGraphView.setTitle("Aerator Status");
 
+        mGraphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
         mGraphView.getViewport().setXAxisBoundsManual(true);
         mGraphView.getViewport().setMinX(0);
         mGraphView.getViewport().setMaxX(288);
@@ -222,6 +229,7 @@ public class AeratorDailyGraphFragment extends Fragment {
         mGraphView.getViewport().setXAxisBoundsManual(true);
 
 
+
         for (int i = 0; i < MAX_AERATOR; i++) {
             mSeries[i] = new RainbowLineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
             //mSeries[i].setTitle("series 1");
@@ -235,7 +243,56 @@ public class AeratorDailyGraphFragment extends Fragment {
         mOnAeratorCountSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
         mOnAeratorCountSeries.setThickness(5);
         mOnAeratorCountSeries.setColor(Color.MAGENTA);
-        mGraphView.addSeries(mOnAeratorCountSeries);
+        //mGraphView.addSeries(mOnAeratorCountSeries);
+    }
+    public void formatUpperPlotArea() {
+
+        mUpperGraphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
+        mUpperGraphView.getViewport().setXAxisBoundsManual(true);
+        mUpperGraphView.getViewport().setMinX(0);
+        mUpperGraphView.getViewport().setMaxX(288);
+
+        // set manual Y bounds
+        mUpperGraphView.getViewport().setYAxisBoundsManual(true);
+        mUpperGraphView.getViewport().setMinY(0);
+        mUpperGraphView.getViewport().setMaxY(16);
+
+        //mGraphView.getViewport().setScrollable(true);
+
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mUpperGraphView);
+        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
+        //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", "","","","","20"});
+        mUpperGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        mUpperGraphView.getGridLabelRenderer().setNumVerticalLabels(9);
+
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mUpperGraphView.getViewport().setMinX(start_time.getTime());
+        mUpperGraphView.getViewport().setMaxX(end_time.getTime());
+        mUpperGraphView.getViewport().setXAxisBoundsManual(true);
+
+
+        mDoLevelSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
+        mDoLevelSeries.setThickness(5);
+        mDoLevelSeries.setColor(Color.BLUE);
+
+        mAvlAeratorSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
+        mAvlAeratorSeries.setThickness(5);
+        mAvlAeratorSeries.setColor(0xFFB0B000);
+
+        mUpperGraphView.addSeries(mDoLevelSeries);
+        mUpperGraphView.addSeries(mOnAeratorCountSeries);
+        mUpperGraphView.addSeries(mAvlAeratorSeries);
     }
 
     public void updateSeriesData() {
@@ -288,15 +345,52 @@ public class AeratorDailyGraphFragment extends Fragment {
 
     }
 
-    public void updateSeriesData(SensorDailyDataXML sensor_xml,LineGraphSeries series) {
+
+
+    public void updateUpperGraphSeriesData() {
         DataPoint[] dataPoint;
-        dataPoint = new DataPoint[sensor_xml.getCountRecord()];
-        for(int ii=0;ii<mOnMotorCountXml.getCountRecord();ii++) {
-            DataPoint v = new DataPoint(ii, mOnMotorCountXml.getDataValue(ii)+0.3);
+        int record_count;
+
+        record_count = mDoLevelXml.getCountRecord();
+        dataPoint = new DataPoint[record_count];
+        for(int ii=0;ii<record_count;ii++) {
+            DataPoint v = new DataPoint(mDoLevelXml.getDataTimeStamp(ii), mDoLevelXml.getDataValue(ii)+0.3);
             dataPoint[ii] = v;
         }
-        mOnAeratorCountSeries.resetData(dataPoint);
-        mOnAeratorCountSeries.setTitle(mOnMotorCountXml.getIoName());
+        mDoLevelSeries.resetData(dataPoint);
+        mDoLevelSeries.setTitle(mDoLevelXml.getIoName());
+
+        record_count = mAvlAeratorXml.getCountRecord();
+        dataPoint = new DataPoint[record_count];
+        for(int ii=0;ii<record_count;ii++) {
+            DataPoint v = new DataPoint(mAvlAeratorXml.getDataTimeStamp(ii), mAvlAeratorXml.getDataValue(ii)+0.3);
+            dataPoint[ii] = v;
+        }
+        mAvlAeratorSeries.resetData(dataPoint);
+        mAvlAeratorSeries.setTitle(mAvlAeratorXml.getIoName());
+
+
+
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mUpperGraphView.getViewport().setMinX(start_time.getTime());
+        mUpperGraphView.getViewport().setMaxX(end_time.getTime());
+        mUpperGraphView.getViewport().setXAxisBoundsManual(true);
+
+        mUpperGraphView.getLegendRenderer().setVisible(true);
+        mUpperGraphView.getLegendRenderer().setBackgroundColor(Color.TRANSPARENT);
+        mUpperGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
     }
 
     void setDate(String date_str) {
@@ -379,9 +473,18 @@ public class AeratorDailyGraphFragment extends Fragment {
                     mAeratorXml[i] = new SensorDailyDataXML(finalUrl);
                     mAeratorXml[i].fetchXML(finalUrl);
                 }
+
                 finalUrl = mBaseUrl + ",4096," + "1506" + "," + date_str;
                 mOnMotorCountXml = new SensorDailyDataXML(finalUrl);
                 mOnMotorCountXml.fetchXML(finalUrl);
+
+                finalUrl = mBaseUrl + ",4096," + "1505" + "," + date_str;
+                mDoLevelXml = new SensorDailyDataXML(finalUrl);
+                mDoLevelXml.fetchXML(finalUrl);
+
+                finalUrl = mBaseUrl + ",4096," + "1507" + "," + date_str;
+                mAvlAeratorXml = new SensorDailyDataXML(finalUrl);
+                mAvlAeratorXml.fetchXML(finalUrl);
 
                 do {
                     loading_complete=true;
@@ -389,6 +492,9 @@ public class AeratorDailyGraphFragment extends Fragment {
                         loading_complete = loading_complete && mAeratorXml[i].isFetchComplete();
                     }
                     loading_complete = loading_complete && mOnMotorCountXml.isFetchComplete();
+                    loading_complete = loading_complete && mDoLevelXml.isFetchComplete();
+                    loading_complete = loading_complete && mAvlAeratorXml.isFetchComplete();
+
 
                     // Publish the progress which triggers onProgressUpdate method
                     publishProgress("" + count++);
@@ -417,6 +523,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             progressDialog.dismiss();
             // Play the music
             updateSeriesData();
+            updateUpperGraphSeriesData();
         }
     }
 
@@ -437,6 +544,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         }
         formatPlotArea();
+        formatUpperPlotArea();
         updateGraph();
     }
 
