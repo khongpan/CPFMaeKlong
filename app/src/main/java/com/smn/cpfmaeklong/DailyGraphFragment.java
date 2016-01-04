@@ -193,9 +193,9 @@ public class DailyGraphFragment extends Fragment {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mGraphView);
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
-        staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
+        //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        //mGraphView.getGridLabelRenderer().setNumVerticalLabels(5);
+        mGraphView.getGridLabelRenderer().setNumVerticalLabels(9);
         //mGraphView.getGridLabelRenderer().setNumHorizontalLabels(9);
 /*
         // set date label formatter

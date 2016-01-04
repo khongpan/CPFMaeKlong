@@ -201,12 +201,29 @@ public class AeratorDailyGraphFragment extends Fragment {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mGraphView);
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
-        staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
+        //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        mGraphView.getGridLabelRenderer().setNumVerticalLabels(9);
+
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mGraphView.getViewport().setMinX(start_time.getTime());
+        mGraphView.getViewport().setMaxX(end_time.getTime());
+        mGraphView.getViewport().setXAxisBoundsManual(true);
 
 
         for (int i = 0; i < MAX_AERATOR; i++) {
-            mSeries[i] = new RainbowLineGraphSeries<DataPoint>();
+            mSeries[i] = new RainbowLineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
             //mSeries[i].setTitle("series 1");
             mSeries[i].setColor(Color.BLUE);
             mSeries[i].setThickness(7);
@@ -215,7 +232,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             mSeries[i].setLevelColor(mStateColor);
             mGraphView.addSeries(mSeries[i]);
         }
-        mOnAeratorCountSeries = new LineGraphSeries<DataPoint>();
+        mOnAeratorCountSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
         mOnAeratorCountSeries.setThickness(5);
         mOnAeratorCountSeries.setColor(Color.MAGENTA);
         mGraphView.addSeries(mOnAeratorCountSeries);
@@ -224,27 +241,50 @@ public class AeratorDailyGraphFragment extends Fragment {
     public void updateSeriesData() {
         DataPoint[] dataPoint;
         int record_count;
+
+
+
         for(int i=0;i<MAX_AERATOR;i++) {
 
             record_count = mAeratorXml[i].getCountRecord();
-            dataPoint = new DataPoint[record_count];
 
-            for (int ii = 0; ii < record_count; ii++) {
-                DataPoint v = new DataPoint(ii, mAeratorXml[i].getDataValue(ii));
-                dataPoint[ii] = v;
+            if (record_count > 0) {
+                dataPoint = new DataPoint[record_count];
+
+                for (int ii = 0; ii < record_count; ii++) {
+                    DataPoint v = new DataPoint(mAeratorXml[i].getDataTimeStamp(ii), mAeratorXml[i].getDataValue(ii));
+                    dataPoint[ii] = v;
+                }
+                mSeries[i].resetData(dataPoint);
+            } else {
+                mSeries[i].resetData(new DataPoint[] {new DataPoint(0,0)});
             }
-            mSeries[i].resetData(dataPoint);
-            //mSeries[i].setTitle(mAeratorXml[i].getIoName());
         }
         record_count = mOnMotorCountXml.getCountRecord();
 
         dataPoint = new DataPoint[record_count];
         for(int ii=0;ii<record_count;ii++) {
-            DataPoint v = new DataPoint(ii, mOnMotorCountXml.getDataValue(ii)+0.3);
+            DataPoint v = new DataPoint(mOnMotorCountXml.getDataTimeStamp(ii), mOnMotorCountXml.getDataValue(ii)+0.3);
             dataPoint[ii] = v;
         }
         mOnAeratorCountSeries.resetData(dataPoint);
         mOnAeratorCountSeries.setTitle(mOnMotorCountXml.getIoName());
+
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mGraphView.getViewport().setMinX(start_time.getTime());
+        mGraphView.getViewport().setMaxX(end_time.getTime());
+        mGraphView.getViewport().setXAxisBoundsManual(true);
 
     }
 
