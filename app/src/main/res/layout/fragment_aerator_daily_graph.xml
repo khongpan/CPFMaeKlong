@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="false"
+            android:id="@+id/fr_graph1">
+
+        </com.jjoe64.graphview.GraphView>
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="false"
+            android:layout_gravity="center"
+            android:id="@+id/fr_graph2"
+            android:layout_alignParentEnd="false"
+            android:layout_below="@+id/fr_graph1"></com.jjoe64.graphview.GraphView>
+
+    </RelativeLayout>
+</ScrollView>
