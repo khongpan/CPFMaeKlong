@@ -8,6 +8,8 @@ package com.smn.cpfmaeklong;
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.DialogInterface;
+        import android.content.pm.ActivityInfo;
+        import android.content.res.Configuration;
         import android.graphics.Color;
         import android.net.ConnectivityManager;
         import android.net.NetworkInfo;
@@ -290,9 +292,9 @@ public class AeratorDailyGraphFragment extends Fragment {
         mAvlAeratorSeries.setThickness(5);
         mAvlAeratorSeries.setColor(0xFFB0B000);
 
-        mUpperGraphView.addSeries(mDoLevelSeries);
         mUpperGraphView.addSeries(mOnAeratorCountSeries);
         mUpperGraphView.addSeries(mAvlAeratorSeries);
+        mUpperGraphView.addSeries(mDoLevelSeries);
     }
 
     public void updateSeriesData() {
@@ -424,6 +426,18 @@ public class AeratorDailyGraphFragment extends Fragment {
         Downloader.execute("100", mStrSelectedDay);
     }
 
+    private void lockScreenOrientation() {
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
+    private void unlockScreenOrientation() {
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    }
 
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
@@ -449,6 +463,7 @@ public class AeratorDailyGraphFragment extends Fragment {
                     cancel = true;
                 }
             });
+            lockScreenOrientation();
 
             //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
         }
@@ -524,6 +539,8 @@ public class AeratorDailyGraphFragment extends Fragment {
             // Play the music
             updateSeriesData();
             updateUpperGraphSeriesData();
+
+            unlockScreenOrientation();
         }
     }
 

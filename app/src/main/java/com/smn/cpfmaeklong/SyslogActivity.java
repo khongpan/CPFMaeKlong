@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -218,6 +220,20 @@ public class SyslogActivity extends AppCompatActivity {
         }
         return have_connection;
     }
+
+    private void lockScreenOrientation() {
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
+    private void unlockScreenOrientation() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    }
+
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
         ProgressDialog progressDialog;
@@ -242,7 +258,7 @@ public class SyslogActivity extends AppCompatActivity {
                     cancel = true;
                 }
             });
-
+            lockScreenOrientation();
             //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
         }
 
@@ -308,7 +324,9 @@ public class SyslogActivity extends AppCompatActivity {
                         new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
                 lv.setAdapter(sAdap);
 
+
             }
+            unlockScreenOrientation();
         }
     }
 
