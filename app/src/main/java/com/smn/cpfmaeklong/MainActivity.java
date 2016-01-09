@@ -323,9 +323,9 @@ public class MainActivity extends AppCompatActivity {
                 value/=10;
                 force_state = value %10;
                 if (relay_state == 3) {
-                    mAerator[i].setBackgroundColor(Color.argb(255, 0, 160, 0));
+                    mAerator[i].setBackgroundColor(Color.argb(255, 0, 192, 0));
                     if (demand_state == 1) {
-                        mAerator[i].setBackgroundColor(Color.argb(255, 0, 192, 0));
+                        mAerator[i].setBackgroundColor(Color.argb(255, 0, 128, 0));
                     }
                 } else if (relay_state == 5) {
                     if (demand_state == 2)

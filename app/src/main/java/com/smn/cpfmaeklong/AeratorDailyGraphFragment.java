@@ -70,8 +70,8 @@ public class AeratorDailyGraphFragment extends Fragment {
     private GraphView mUpperGraphView;
 
 
-    private int[] mColorList = {Color.BLUE,Color.GREEN,Color.BLACK,Color.CYAN,Color.YELLOW,
-            Color.MAGENTA,Color.LTGRAY,Color.DKGRAY,Color.RED,Color.GRAY};
+    private int[] mColorList = {Color.BLUE,Color.MAGENTA,Color.DKGRAY,Color.CYAN,Color.YELLOW,
+            Color.GREEN,Color.LTGRAY,Color.BLACK,Color.RED,Color.GRAY};
 
     private RainbowLineGraphSeries[] mSeries = new RainbowLineGraphSeries[MAX_AERATOR];
     private LineGraphSeries[] mPondControlStatusSeries= new LineGraphSeries[PC_PARA_NUM];
