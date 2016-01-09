@@ -115,6 +115,8 @@ public class DailyGraphActivity extends AppCompatActivity
                     getSupportFragmentManager().findFragmentById(R.id.frDailyGraph);
 
             if (dailyGraphFragment != null) {
+
+
                 // If article frag is available, we're in two-pane layout...
                 // Call a method in the ArticleFragment to update its content
                 dailyGraphFragment.setDate(mCurrentDate);

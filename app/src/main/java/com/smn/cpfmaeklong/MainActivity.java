@@ -23,11 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    final int AERATOR_NUM=16;
     Button mBtnDoLevel, mBtnOnMotorCount, mBtnRefresh, mBtnUsableMotor;
     TextView tv;
-    TextView[] mAerator =new TextView[12+1];
+    TextView[] mAerator =new TextView[AERATOR_NUM+1];
     String url1,url2;
-    String[] sMotorUrl= new String[12+1];
+    String[] sMotorUrl= new String[AERATOR_NUM+1];
     String sAvlMotorUrl;
     private String chk;
     String[] BaseURL = {"http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-3",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-4",};
     SensorInfoXML xmlDoLevel, xmlOnMotorCount;
-    SensorInfoXML[] xmlMotor=new SensorInfoXML[12+1];
+    SensorInfoXML[] xmlMotor=new SensorInfoXML[AERATOR_NUM+1];
     SensorInfoXML xmlUsableMotorCount;
 
     private String[] strPondsName;
@@ -92,6 +94,10 @@ public class MainActivity extends AppCompatActivity {
         mAerator[10] = (TextView) findViewById(R.id.btM10);
         mAerator[11] = (TextView) findViewById(R.id.btM11);
         mAerator[12] = (TextView) findViewById(R.id.btM12);
+        mAerator[13] = (TextView) findViewById(R.id.btM13);
+        mAerator[14] = (TextView) findViewById(R.id.btM14);
+        mAerator[15] = (TextView) findViewById(R.id.btM15);
+        mAerator[16] = (TextView) findViewById(R.id.btM16);
 
         //ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         //NetworkInfo nInfo = cManager.getActiveNetworkInfo();
@@ -115,29 +121,34 @@ public class MainActivity extends AppCompatActivity {
 
                     SelectedPond = pos;
 
-                    if (pos == 0 ) {
+                    if (pos == 0) {
 
-                        sMotorUrl[1] = BaseURL[pos] + ",4096,1560";
-                        sMotorUrl[2] = BaseURL[pos] + ",4096,1564";
-                        sMotorUrl[3] = BaseURL[pos] + ",4096,1561";
-                        sMotorUrl[4] = BaseURL[pos] + ",4096,1565";
-                        sMotorUrl[5] = BaseURL[pos] + ",4096,1562";
-                        sMotorUrl[6] = BaseURL[pos] + ",4096,1566";
-                        sMotorUrl[7] = BaseURL[pos] + ",4096,1563";
-                        sMotorUrl[8] = BaseURL[pos] + ",4096,1567";
-                        sMotorUrl[9] = BaseURL[pos] + ",4096,1568";
-                        sMotorUrl[10] = BaseURL[pos] + ",4096,1569";
-                        sMotorUrl[11] = BaseURL[pos] + ",4096,1570";
-                        sMotorUrl[12] = BaseURL[pos] + ",4096,1571";
-                    } else if (pos==1) {
+                        sMotorUrl[1] = BaseURL[pos] + ",4096,1520";
+                        sMotorUrl[2] = BaseURL[pos] + ",4096,1524";
+                        sMotorUrl[3] = BaseURL[pos] + ",4096,1521";
+                        sMotorUrl[4] = BaseURL[pos] + ",4096,1525";
+                        sMotorUrl[5] = BaseURL[pos] + ",4096,1522";
+                        sMotorUrl[6] = BaseURL[pos] + ",4096,1526";
+                        sMotorUrl[7] = BaseURL[pos] + ",4096,1523";
+                        sMotorUrl[8] = BaseURL[pos] + ",4096,1527";
+                        sMotorUrl[9] = BaseURL[pos] + ",4096,1528";
+                        sMotorUrl[10] = BaseURL[pos] + ",4096,1529";
+                        sMotorUrl[11] = BaseURL[pos] + ",4096,1530";
+                        sMotorUrl[12] = BaseURL[pos] + ",4096,1531";
+                        sMotorUrl[13] = BaseURL[pos] + ",4096,1532";
+                        sMotorUrl[14] = BaseURL[pos] + ",4096,1533";
+                        sMotorUrl[15] = BaseURL[pos] + ",4096,1534";
+                        sMotorUrl[16] = BaseURL[pos] + ",4096,1535";
+                    } else if (pos == 1) {
                         url1 = BaseURL[pos] + ",8192,100";
                         url2 = BaseURL[pos] + ",4096,1560";
-                        for (i = 1; i < 12; i++) sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
+                        for (i = 1; i < AERATOR_NUM; i++)
+                            sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
                     } else {
-                        int ionumber= 1560;
+                        int ionumber = 1560;
 
-                        for (i=1;i<=12;i++){
-                            sMotorUrl[i] = BaseURL[pos] +",4096,"+ String.valueOf(ionumber);
+                        for (i = 1; i <= AERATOR_NUM; i++) {
+                            sMotorUrl[i] = BaseURL[pos] + ",4096," + String.valueOf(ionumber);
                             ionumber++;
                         }
                     }
@@ -169,12 +180,12 @@ public class MainActivity extends AppCompatActivity {
 
             mBtnUsableMotor.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
+                public void onClick(View v) {
                     launchAeratorGraph(v);
                 }
 
 
-        });
+            });
 
 
             mAerator[1].setOnClickListener(new View.OnClickListener() {
@@ -249,28 +260,84 @@ public class MainActivity extends AppCompatActivity {
                     ShowMotorState(12);
                 }
             });
+            mAerator[13].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(13);
+                }
+            });
+            mAerator[14].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(14);
+                }
+            });
+            mAerator[15].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(15);
+                }
+            });
+            mAerator[16].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(16);
+                }
+            });
+
         }
     }
 
     public void DisplayMotorStatus(){
 
-        for(int i=1;i<=12;i++) {
+        int relay_state;
+        int require_state;
+        int demand_state;
+        int force_state;
 
-            if(xmlMotor[i].getLastValue()==null){
+        String str_value;
+        int value;
+        for(int i=1;i<=AERATOR_NUM;i++) {
+
+            str_value = xmlMotor[i].getLastValue();
+
+            if(str_value.equals("-")){
                 mAerator[i].setBackgroundColor(Color.WHITE);
-            }else if (xmlMotor[i].getLastValue().equals("3")) {
-                mAerator[i].setBackgroundColor(Color.argb(255, 0, 150, 0));
-            } else if (xmlMotor[i].getLastValue().equals("5")) {
-                if (xmlMotor[i].getDetails().equals("must_off"))
-                    mAerator[i].setBackgroundColor(Color.argb(64,64,64,0));
-                else
-                    mAerator[i].setBackgroundColor(Color.BLACK);
-            } else if (xmlMotor[i].getLastValue().equals("-")) {
-                mAerator[i].setBackgroundColor(Color.WHITE);
-            } else {
-                mAerator[i].setBackgroundColor(Color.RED);
+            }else {
+                value = (int) Float.parseFloat(str_value);
+                relay_state = value%10;
+                value/=10;
+                require_state = value%10;
+                value/=10;
+                demand_state = value%10;
+                value/=10;
+                force_state = value %10;
+
+                str_value = xmlMotor[i].getLastValue();
+                value = (int) Float.parseFloat(str_value);
+                relay_state = value%10;
+                value/=10;
+                require_state = value%10;
+                value/=10;
+                demand_state = value%10;
+                value/=10;
+                force_state = value %10;
+                if (relay_state == 3) {
+                    mAerator[i].setBackgroundColor(Color.argb(255, 0, 160, 0));
+                    if (demand_state == 1) {
+                        mAerator[i].setBackgroundColor(Color.argb(255, 0, 192, 0));
+                    }
+                } else if (relay_state == 5) {
+                    if (demand_state == 2)
+                        mAerator[i].setBackgroundColor(Color.argb(64, 64, 64, 0));
+                    else
+                        mAerator[i].setBackgroundColor(Color.BLACK);
+                } else if (str_value.equals("-")) {
+                    mAerator[i].setBackgroundColor(Color.WHITE);
+                } else {
+                    mAerator[i].setBackgroundColor(Color.RED);
+                }
             }
-
 
 
         }
@@ -279,18 +346,62 @@ public class MainActivity extends AppCompatActivity {
 
     public void ShowMotorState(int mNo){
 
-        String[] sStateMeaning = {
+        int relay_state;
+        int require_state;
+        int demand_state;
+        int force_state;
+        int value;
+        int state;
+        String str_value;
+
+        String[] strRelayState = {
             "null","Unknow","Activate","On","Deactivate","Off",
             "OverCurrent","UnderCurrent","InternalErr","CommError","LastState"
         };
 
+        String[] strRequireState = {
+                "req_off","req_on"
+        };
+
+        String[] strDemandState = {
+                "free","must_on","must_off"
+        };
+
+        String[] strForceState = {
+                "control","force_on","force_off","don't_care"
+        };
+
         if (xmlMotor[mNo]==null) return;
 
-        if (xmlMotor[mNo].getLastValue().equals("-")) return;
+        str_value = xmlMotor[mNo].getLastValue();
 
-        int state = Integer.parseInt(xmlMotor[mNo].getLastValue());
+        if (str_value.equals("-")) return;
 
-        Toast.makeText(this,"Motor"+ mNo + " " + sStateMeaning[state] + " S" + state , Toast.LENGTH_SHORT).show();
+        value = (int) Float.parseFloat(str_value);
+        state = value;
+        relay_state = value%10;
+        value/=10;
+        require_state = value%10;
+        value/=10;
+        demand_state = value%10;
+        value/=10;
+        force_state = value %10;
+
+        String str_show;
+
+        if (SelectedPond==2) {
+            str_show = "Motor"+ mNo + " S" + state + " "
+                    + strRelayState[relay_state];
+        } else {
+            str_show = "Motor"+ mNo + " S" + state + " "
+                    + strRelayState[relay_state] + " "
+                    + strRequireState[require_state] + " "
+                    + strDemandState[demand_state] + " "
+                    + strForceState[force_state];
+        }
+
+
+        Toast.makeText(this,str_show,Toast.LENGTH_SHORT).show();
 
     }
 
@@ -441,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
                 xmlOnMotorCount = new SensorInfoXML(url2);
                 xmlOnMotorCount.fetchXML();
 
-                for (int i = 1; i <= 12; i++) {
+                for (int i = 1; i <= AERATOR_NUM; i++) {
                     xmlMotor[i] = new SensorInfoXML(sMotorUrl[i]);
                     xmlMotor[i].fetchXML();
                 }
@@ -455,7 +566,7 @@ public class MainActivity extends AppCompatActivity {
                     publishProgress("" + count++);
                 }
                 while (!xmlOnMotorCount.isFetchComplete()) ;
-                for (int i = 1; i <= 12; i++) {
+                for (int i = 1; i <= AERATOR_NUM; i++) {
                     while (!xmlMotor[i].isFetchComplete()) ;
                 }
                 while (!xmlUsableMotorCount.isFetchComplete()) ;
@@ -493,7 +604,7 @@ public class MainActivity extends AppCompatActivity {
             str = String.format("%.2f", f);
             mBtnDoLevel.setText(str);
 
-            for (int i = 1; i <= 12; i++) {
+            for (int i = 1; i <= AERATOR_NUM; i++) {
                 mAerator[i].setText(String.valueOf(i));
             }
 

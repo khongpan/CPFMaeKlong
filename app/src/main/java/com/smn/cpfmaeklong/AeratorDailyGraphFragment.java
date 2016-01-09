@@ -54,7 +54,8 @@ public class AeratorDailyGraphFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private static final int MAX_AERATOR = 12;
+    private static final int MAX_AERATOR = 16;
+    private static final int PC_PARA_NUM = 3;
 
     Date date = new Date();
     String mStrSelectedDay;
@@ -68,15 +69,21 @@ public class AeratorDailyGraphFragment extends Fragment {
     private GraphView mGraphView;
     private GraphView mUpperGraphView;
 
+
+    private int[] mColorList = {Color.BLUE,Color.GREEN,Color.BLACK,Color.CYAN,Color.YELLOW,
+            Color.MAGENTA,Color.LTGRAY,Color.DKGRAY,Color.RED,Color.GRAY};
+
     private RainbowLineGraphSeries[] mSeries = new RainbowLineGraphSeries[MAX_AERATOR];
-    private LineGraphSeries mOnAeratorCountSeries;
-    private LineGraphSeries mDoLevelSeries;
-    private LineGraphSeries mAvlAeratorSeries;
+    private LineGraphSeries[] mPondControlStatusSeries= new LineGraphSeries[PC_PARA_NUM];
+    //private LineGraphSeries mOnAeratorCountSeries;
+    //private LineGraphSeries mDoLevelSeries;
+    //private LineGraphSeries mAvlAeratorSeries;
 
     private SensorDailyDataXML[] mAeratorXml = new SensorDailyDataXML[MAX_AERATOR];
-    private SensorDailyDataXML mOnMotorCountXml;
-    private SensorDailyDataXML mDoLevelXml;
-    private SensorDailyDataXML mAvlAeratorXml;
+    private SensorDailyDataXML[] mPondControlStatusXml = new SensorDailyDataXML[3];
+    //private SensorDailyDataXML mOnMotorCountXml;
+    //private SensorDailyDataXML mDoLevelXml;
+    //private SensorDailyDataXML mAvlAeratorXml;
 
     int [] mStateColor = new int[] {
             Color.GRAY,
@@ -242,9 +249,9 @@ public class AeratorDailyGraphFragment extends Fragment {
             mSeries[i].setLevelColor(mStateColor);
             mGraphView.addSeries(mSeries[i]);
         }
-        mOnAeratorCountSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
-        mOnAeratorCountSeries.setThickness(5);
-        mOnAeratorCountSeries.setColor(Color.MAGENTA);
+        //mOnAeratorCountSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
+        //mOnAeratorCountSeries.setThickness(5);
+        //mOnAeratorCountSeries.setColor(Color.MAGENTA);
         //mGraphView.addSeries(mOnAeratorCountSeries);
     }
     public void formatUpperPlotArea() {
@@ -283,6 +290,14 @@ public class AeratorDailyGraphFragment extends Fragment {
         mUpperGraphView.getViewport().setMaxX(end_time.getTime());
         mUpperGraphView.getViewport().setXAxisBoundsManual(true);
 
+        for (int i=0; i<PC_PARA_NUM;i++) {
+            mPondControlStatusSeries[i] = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0)});
+            mPondControlStatusSeries[i].setThickness(5);
+            mPondControlStatusSeries[i].setColor(mColorList[i]);
+            mUpperGraphView.addSeries(mPondControlStatusSeries[i]);
+        }
+
+/*
 
         mDoLevelSeries = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
         mDoLevelSeries.setThickness(5);
@@ -295,13 +310,12 @@ public class AeratorDailyGraphFragment extends Fragment {
         mUpperGraphView.addSeries(mOnAeratorCountSeries);
         mUpperGraphView.addSeries(mAvlAeratorSeries);
         mUpperGraphView.addSeries(mDoLevelSeries);
+*/
     }
 
     public void updateSeriesData() {
         DataPoint[] dataPoint;
         int record_count;
-
-
 
         for(int i=0;i<MAX_AERATOR;i++) {
 
@@ -311,23 +325,20 @@ public class AeratorDailyGraphFragment extends Fragment {
                 dataPoint = new DataPoint[record_count];
 
                 for (int ii = 0; ii < record_count; ii++) {
-                    DataPoint v = new DataPoint(mAeratorXml[i].getDataTimeStamp(ii), mAeratorXml[i].getDataValue(ii));
+                    DataPoint v = new DataPoint(mAeratorXml[i].getDataTimeStamp(ii), mAeratorXml[i].getDataValue(ii)%10);
                     dataPoint[ii] = v;
                 }
-                mSeries[i].resetData(dataPoint);
-            } else {
-                mSeries[i].resetData(new DataPoint[] {new DataPoint(0,0)});
-            }
-        }
-        record_count = mOnMotorCountXml.getCountRecord();
 
-        dataPoint = new DataPoint[record_count];
-        for(int ii=0;ii<record_count;ii++) {
-            DataPoint v = new DataPoint(mOnMotorCountXml.getDataTimeStamp(ii), mOnMotorCountXml.getDataValue(ii)+0.3);
-            dataPoint[ii] = v;
+            } else {
+                dataPoint = new DataPoint[] {new DataPoint(0,0)};
+            }
+            mSeries[i].resetData(dataPoint);
         }
-        mOnAeratorCountSeries.resetData(dataPoint);
-        mOnAeratorCountSeries.setTitle(mOnMotorCountXml.getIoName());
+
+    }
+
+    void reformatPlotArea()
+    {
 
         // set manual x bounds to have nice steps
         SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -344,14 +355,54 @@ public class AeratorDailyGraphFragment extends Fragment {
         mGraphView.getViewport().setMinX(start_time.getTime());
         mGraphView.getViewport().setMaxX(end_time.getTime());
         mGraphView.getViewport().setXAxisBoundsManual(true);
+    }
 
+    void reformatPondControlStatusPlotArea()
+    {
+
+        // set manual x bounds to have nice steps
+        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_time = new Date();
+        Date end_time= new Date();
+        try {
+            start_time = date_formatter.parse(mStrSelectedDay);
+            end_time.setTime(start_time.getTime()+1000*60*60*24);
+        }    catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        mUpperGraphView.getViewport().setMinX(start_time.getTime());
+        mUpperGraphView.getViewport().setMaxX(end_time.getTime());
+        mUpperGraphView.getViewport().setXAxisBoundsManual(true);
     }
 
 
 
-    public void updateUpperGraphSeriesData() {
+    public void updatePondControlStatusGraphSeriesData() {
         DataPoint[] dataPoint;
         int record_count;
+
+
+        for (int i =0; i<PC_PARA_NUM;i++) {
+            record_count = mPondControlStatusXml[i].getCountRecord();
+            dataPoint = new DataPoint[record_count];
+            for (int ii=0;ii<record_count;ii++) {
+                DataPoint v = new DataPoint(mPondControlStatusXml[i].getDataTimeStamp(ii), (int) mPondControlStatusXml[i].getDataValue(ii));
+                dataPoint[ii] = v;
+            }
+            if (record_count>0) {
+                mPondControlStatusSeries[i].resetData(dataPoint);
+            } else {
+                dataPoint = new DataPoint[] {new DataPoint(0,0)};
+                mPondControlStatusSeries[i].resetData(dataPoint);
+            }
+            mPondControlStatusSeries[i].setTitle(mPondControlStatusXml[i].getIoName());
+        }
+
+
+
+/*
 
         record_count = mDoLevelXml.getCountRecord();
         dataPoint = new DataPoint[record_count];
@@ -370,6 +421,17 @@ public class AeratorDailyGraphFragment extends Fragment {
         }
         mAvlAeratorSeries.resetData(dataPoint);
         mAvlAeratorSeries.setTitle(mAvlAeratorXml.getIoName());
+
+
+        record_count = mOnMotorCountXml.getCountRecord();
+        dataPoint = new DataPoint[record_count];
+        for(int ii=0;ii<record_count;ii++) {
+            DataPoint v = new DataPoint(mOnMotorCountXml.getDataTimeStamp(ii), mOnMotorCountXml.getDataValue(ii)+0.3);
+            dataPoint[ii] = v;
+        }
+        mOnAeratorCountSeries.resetData(dataPoint);
+        mOnAeratorCountSeries.setTitle(mOnMotorCountXml.getIoName());
+*/
 
 
 
@@ -476,11 +538,15 @@ public class AeratorDailyGraphFragment extends Fragment {
             String finalUrl;
             String io_number_str = str[0];
             String date_str = str[1];
-            int io_number=1560;
+            int io_number;
             boolean loading_complete;
 
             try {
-
+                if (mSelectedPond==0) {
+                    io_number = 1520;
+                } else {
+                    io_number = 1560;
+                }
                 for (int i=0;i<MAX_AERATOR;i++) {
                     finalUrl = mBaseUrl + ",4096," + io_number + "," + date_str;
                     io_number++;
@@ -489,6 +555,17 @@ public class AeratorDailyGraphFragment extends Fragment {
                     mAeratorXml[i].fetchXML(finalUrl);
                 }
 
+                io_number = 1505;
+                for (int i=0;i<PC_PARA_NUM;i++)
+                {
+                    finalUrl = mBaseUrl + ",4096," + io_number + "," + date_str;
+                    io_number++;
+
+                    mPondControlStatusXml[i] = new SensorDailyDataXML(finalUrl);
+                    mPondControlStatusXml[i].fetchXML(finalUrl);
+                }
+
+/*
                 finalUrl = mBaseUrl + ",4096," + "1506" + "," + date_str;
                 mOnMotorCountXml = new SensorDailyDataXML(finalUrl);
                 mOnMotorCountXml.fetchXML(finalUrl);
@@ -500,15 +577,20 @@ public class AeratorDailyGraphFragment extends Fragment {
                 finalUrl = mBaseUrl + ",4096," + "1507" + "," + date_str;
                 mAvlAeratorXml = new SensorDailyDataXML(finalUrl);
                 mAvlAeratorXml.fetchXML(finalUrl);
-
+*/
                 do {
                     loading_complete=true;
                     for(int i=0;i<MAX_AERATOR;i++) {
                         loading_complete = loading_complete && mAeratorXml[i].isFetchComplete();
                     }
+                    for (int i=0;i<3;i++) {
+                        loading_complete = loading_complete && mPondControlStatusXml[i].isFetchComplete();
+                    }
+                    /*
                     loading_complete = loading_complete && mOnMotorCountXml.isFetchComplete();
                     loading_complete = loading_complete && mDoLevelXml.isFetchComplete();
                     loading_complete = loading_complete && mAvlAeratorXml.isFetchComplete();
+                    */
 
 
                     // Publish the progress which triggers onProgressUpdate method
@@ -537,10 +619,73 @@ public class AeratorDailyGraphFragment extends Fragment {
 
             progressDialog.dismiss();
             // Play the music
-            updateSeriesData();
-            updateUpperGraphSeriesData();
+            //updateSeriesData();
+            //updatePondControlStatusGraphSeriesData();
+            PlotDailyData plotter = new PlotDailyData();
+            plotter.execute("100", mStrSelectedDay);
 
             unlockScreenOrientation();
+        }
+    }
+
+    // Async Task Class
+    class PlotDailyData extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog;
+        boolean cancel;
+
+        // Show Progress bar before downloading Music
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Shows Progress Bar Dialog and then call doInBackground method
+            //showDialog(progress_bar_type);
+            cancel = false;
+
+            progressDialog = ProgressDialog.show(getActivity(),
+                    "Processing Data",
+                    "Please Wait!");
+
+            progressDialog.setCanceledOnTouchOutside(true);
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    cancel = true;
+                }
+            });
+            lockScreenOrientation();
+
+            //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
+        }
+
+        // Download xml from Internet
+        @Override
+        protected String doInBackground(String... str) {
+            //updateSeriesData();
+            //updateUpperGraphSeriesData();
+            return null;
+        }
+
+        // While Downloading Music File
+        @Override
+        protected void onProgressUpdate(String... progress) {
+            // Set progress percentage
+            progressDialog.setMessage("Please wait... " + String.valueOf(progress[0]) + " sec");
+        }
+
+        // Once XML is downloaded
+        @Override
+        protected void onPostExecute(String file_url) {
+            // Dismiss the dialog after the Xml file was downloaded
+            //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
+
+
+            // Play the music
+
+            updateSeriesData();
+            reformatPlotArea();
+            updatePondControlStatusGraphSeriesData();
+            progressDialog.dismiss();
+            //unlockScreenOrientation();
         }
     }
 

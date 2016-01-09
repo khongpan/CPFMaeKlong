@@ -13,3 +13,13 @@ http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c6
 
 [errlog] เรียกดู error log สำหรับ NetworkID, NodeID และวันที่ที่กำหนด
 http://agritronics.nstda.or.th/ws/get.php?appkey=0c5a295bd8c07a081c521369eefa7c64&errlog=POND-CONTROL,5120,2015-08-05
+
+
+
+ioNumber 1520-1531 motor state, ABCD base 10
+A control=0, forcedOn=1, forcedOff=2, dontCare=3
+B onDemand=0, mustOn=1, mustOff=2
+C On=1, Off=0
+D Null=0, Unknown, Activate, On, Deactivate, Off, OverCurrent, UnderCurrent,  InternalError, CommError
+ioNumber 1560-1571 motor currrent
+ioNumber 1600-1611 motor operating time
