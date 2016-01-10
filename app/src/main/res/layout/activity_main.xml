@@ -30,7 +30,8 @@
                 android:layout_toRightOf="@+id/spnPond"
                 android:layout_toEndOf="@+id/spnPond"
                 android:gravity="right"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:textStyle="bold|italic" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -121,7 +122,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="270dp"
+                android:layout_height="290dp"
                 android:layout_below="@+id/txtMS"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
@@ -291,7 +292,8 @@
                     android:layout_toLeftOf="@+id/btM1"
                     android:layout_toStartOf="@+id/btM1"
                     android:textColor="#ffffff"
-                    android:ellipsize="middle" />
+                    android:ellipsize="middle"
+                    android:textStyle="bold" />
 
                 <Button
                     android:layout_width="40dp"
@@ -301,7 +303,8 @@
                     android:layout_above="@+id/btM3"
                     android:layout_toRightOf="@+id/btM3"
                     android:layout_toEndOf="@+id/btM3"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:textStyle="bold" />
 
                 <Button
                     android:layout_width="40dp"
@@ -311,7 +314,8 @@
                     android:layout_below="@+id/btM5"
                     android:layout_toRightOf="@+id/btM5"
                     android:layout_toEndOf="@+id/btM5"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:textStyle="bold" />
 
                 <Button
                     android:layout_width="40dp"
@@ -321,7 +325,8 @@
                     android:layout_below="@+id/btM7"
                     android:layout_toLeftOf="@+id/btM7"
                     android:layout_toStartOf="@+id/btM7"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
 

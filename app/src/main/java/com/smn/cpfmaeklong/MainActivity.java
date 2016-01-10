@@ -22,6 +22,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
     final int AERATOR_NUM=16;
@@ -325,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
                 if (relay_state == 3) {
                     mAerator[i].setBackgroundColor(Color.argb(255, 0, 192, 0));
                     if (demand_state == 1) {
-                        mAerator[i].setBackgroundColor(Color.argb(255, 0, 128, 0));
+                        mAerator[i].setBackgroundColor(Color.argb(255, 0, 112, 0));
                     }
                 } else if (relay_state == 5) {
                     if (demand_state == 2)
@@ -415,7 +418,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LaunchGraph(View view) {
-        //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
         String message = BaseURL[SelectedPond];
         Intent intent = new Intent(this, DailyGraphActivity.class);
         intent.putExtra("BASE_URL", message);
@@ -425,7 +427,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LaunchGrid(View view) {
-        //String EXTRA_MESSAGE = "com.smn.cpfmaeklong.MESSAGE";
         String message = BaseURL[SelectedPond];
         Intent intent = new Intent(this, SyslogActivity.class);
         intent.putExtra("BASE_URL", message);
@@ -495,6 +496,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             have_connection=true;
         }
+
         return have_connection;
     }
 
@@ -594,7 +596,25 @@ public class MainActivity extends AppCompatActivity {
             //updateSeriesData();
             mBtnDoLevel.setText(xmlDoLevel.getLastValue());
             mBtnOnMotorCount.setText(xmlOnMotorCount.getLastValue());
+
+            SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date io_time = new Date();
+            Date cur_time = new Date();
+            try {
+                io_time = date_formatter.parse(xmlDoLevel.getIoDateTime());
+                if (cur_time.getTime()-io_time.getTime() > 1000*60*60);
+            }    catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             tv.setText(xmlDoLevel.getIoDateTime());
+            if (cur_time.getTime()-io_time.getTime() > 1000*60*60) {
+                tv.setTextColor(Color.RED);
+                Toast.makeText(getBaseContext(), "Data too old !!! " ,Toast.LENGTH_LONG).show();
+            } else {
+                tv.setTextColor(Color.BLACK);
+            }
+
 
             String str = mBtnDoLevel.getText().toString();
             float f = Float.parseFloat(str);
