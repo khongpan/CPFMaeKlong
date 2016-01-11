@@ -359,20 +359,20 @@ public class MainActivity extends AppCompatActivity {
         String str_value;
 
         String[] strRelayState = {
-            "null","Unknow","Activate","On","Deactivate","Off",
+            "Null","Unknow","Activate","On","Deactivate","Off",
             "OverCurrent","UnderCurrent","InternalErr","CommError","LastState"
         };
 
         String[] strRequireState = {
-                "req_off","req_on"
+                "ReqOff","ReqOn"
         };
 
         String[] strDemandState = {
-                "free","must_on","must_off"
+                "Free","MustOn","MustOff"
         };
 
         String[] strForceState = {
-                "control","force_on","force_off","don't_care"
+                "Control","ForceOn","ForceOff","UnCare"
         };
 
         if (xmlMotor[mNo]==null) return;
@@ -512,7 +512,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void unlockScreenOrientation() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+
     }
 
     // Async Task Class
@@ -610,7 +612,10 @@ public class MainActivity extends AppCompatActivity {
             // Play the music
             //updateSeriesData();
 
-            if (cancel) return;
+            if (cancel) {
+                unlockScreenOrientation();
+                return;
+            }
 
             mBtnDoLevel.setText(xmlDoLevel.getLastValue());
             mBtnOnMotorCount.setText(xmlOnMotorCount.getLastValue());

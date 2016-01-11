@@ -498,7 +498,9 @@ public class AeratorDailyGraphFragment extends Fragment {
     }
 
     private void unlockScreenOrientation() {
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+
     }
 
     // Async Task Class
@@ -619,14 +621,16 @@ public class AeratorDailyGraphFragment extends Fragment {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
             progressDialog.dismiss();
-            if (cancel) return;
+            if (cancel) {
+                unlockScreenOrientation();
+                return;
+            }
             // Play the music
             //updateSeriesData();
             //updatePondControlStatusGraphSeriesData();
             PlotDailyData plotter = new PlotDailyData();
             plotter.execute("100", mStrSelectedDay);
-
-            unlockScreenOrientation();
+            //unlockScreenOrientation();
         }
     }
 
@@ -654,7 +658,7 @@ public class AeratorDailyGraphFragment extends Fragment {
                     cancel = true;
                 }
             });
-            lockScreenOrientation();
+            //lockScreenOrientation();
 
             //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
         }
@@ -687,7 +691,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             reformatPlotArea();
             updatePondControlStatusGraphSeriesData();
             progressDialog.dismiss();
-            //unlockScreenOrientation();
+            unlockScreenOrientation();
         }
     }
 

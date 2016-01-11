@@ -366,7 +366,8 @@ public class DailyGraphFragment extends Fragment {
     }
 
     private void unlockScreenOrientation() {
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
     // Async Task Class
     class DownloadFromInternet extends AsyncTask<String, String, String> {
@@ -450,7 +451,7 @@ public class DailyGraphFragment extends Fragment {
         @Override
         protected void onProgressUpdate(String... progress) {
             // Set progress percentage
-            progressDialog.setMessage("Please wait... "+String.valueOf(progress[0])+" sec");
+            progressDialog.setMessage("Please wait... " + String.valueOf(progress[0]) + " sec");
         }
 
         // Once XML is downloaded
@@ -460,7 +461,10 @@ public class DailyGraphFragment extends Fragment {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
             progressDialog.dismiss();
-            if (cancel) return;
+            if (cancel) {
+                unlockScreenOrientation();
+                return;
+            }
 
             updateSeriesData();
             unlockScreenOrientation();

@@ -231,7 +231,8 @@ public class SyslogActivity extends AppCompatActivity {
     }
 
     private void unlockScreenOrientation() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     // Async Task Class
@@ -300,7 +301,10 @@ public class SyslogActivity extends AppCompatActivity {
 
             progressDialog.dismiss();
 
-            if (cancel) return;
+            if (cancel) {
+                unlockScreenOrientation();
+                return;
+            }
             if (objs.getCountRecord() == 0) {
                 Toast.makeText(SyslogActivity.this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
             } else {
