@@ -429,9 +429,13 @@ public class DailyGraphFragment extends Fragment {
                     Thread.sleep(1000);
                     publishProgress("" + count++);
 
+                    if (cancel) break;
+
 
                 }
-                while (!sensorXml2.isFetchComplete());
+                while (!sensorXml2.isFetchComplete()) {
+                    if (cancel) break;
+                }
 
 
 
@@ -456,6 +460,8 @@ public class DailyGraphFragment extends Fragment {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
             progressDialog.dismiss();
+            if (cancel) return;
+
             updateSeriesData();
             unlockScreenOrientation();
         }

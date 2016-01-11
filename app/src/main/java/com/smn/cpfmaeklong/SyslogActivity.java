@@ -277,6 +277,7 @@ public class SyslogActivity extends AppCompatActivity {
                 while (!objs.parsingComplete) {
                     Thread.sleep(1000);
                     publishProgress("" + count++);
+                    if (cancel) break;
                 }
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
@@ -298,6 +299,8 @@ public class SyslogActivity extends AppCompatActivity {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
             progressDialog.dismiss();
+
+            if (cancel) return;
             if (objs.getCountRecord() == 0) {
                 Toast.makeText(SyslogActivity.this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
             } else {

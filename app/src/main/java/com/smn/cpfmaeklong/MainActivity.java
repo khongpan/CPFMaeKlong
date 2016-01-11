@@ -28,6 +28,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     final int AERATOR_NUM=16;
+    boolean mDownloadCancel;
     Button mBtnDoLevel, mBtnOnMotorCount, mBtnRefresh, mBtnUsableMotor;
     TextView tv;
     TextView[] mAerator =new TextView[AERATOR_NUM+1];
@@ -566,12 +567,26 @@ public class MainActivity extends AppCompatActivity {
                 while (!xmlDoLevel.isFetchComplete()) {
                     Thread.sleep(1000);
                     publishProgress("" + count++);
+                    if(cancel)
+                        break;
                 }
-                while (!xmlOnMotorCount.isFetchComplete()) ;
+                while (!xmlOnMotorCount.isFetchComplete())  {
+                    if (cancel)
+                        break;
+                }
+
                 for (int i = 1; i <= AERATOR_NUM; i++) {
-                    while (!xmlMotor[i].isFetchComplete()) ;
+                    while (!xmlMotor[i].isFetchComplete()) {
+                        if (cancel)
+                            break;
+                    }
                 }
-                while (!xmlUsableMotorCount.isFetchComplete()) ;
+                while (!xmlUsableMotorCount.isFetchComplete()) {
+                    if (cancel)
+                        break;
+                }
+
+
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
             }
@@ -594,6 +609,9 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.dismiss();
             // Play the music
             //updateSeriesData();
+
+            if (cancel) return;
+
             mBtnDoLevel.setText(xmlDoLevel.getLastValue());
             mBtnOnMotorCount.setText(xmlOnMotorCount.getLastValue());
 

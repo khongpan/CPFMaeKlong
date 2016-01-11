@@ -388,7 +388,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             record_count = mPondControlStatusXml[i].getCountRecord();
             dataPoint = new DataPoint[record_count];
             for (int ii=0;ii<record_count;ii++) {
-                DataPoint v = new DataPoint(mPondControlStatusXml[i].getDataTimeStamp(ii), (int) mPondControlStatusXml[i].getDataValue(ii));
+                DataPoint v = new DataPoint(mPondControlStatusXml[i].getDataTimeStamp(ii), mPondControlStatusXml[i].getDataValue(ii));
                 dataPoint[ii] = v;
             }
             if (record_count>0) {
@@ -595,6 +595,7 @@ public class AeratorDailyGraphFragment extends Fragment {
 
                     // Publish the progress which triggers onProgressUpdate method
                     publishProgress("" + count++);
+                    if (cancel) break;
                     if (!loading_complete) Thread.sleep(1000);
                 } while (!loading_complete);
 
@@ -618,6 +619,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
             progressDialog.dismiss();
+            if (cancel) return;
             // Play the music
             //updateSeriesData();
             //updatePondControlStatusGraphSeriesData();
