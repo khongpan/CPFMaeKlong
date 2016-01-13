@@ -651,7 +651,7 @@ public class AeratorDailyGraphFragment extends Fragment {
             // Shows Progress Bar Dialog and then call doInBackground method
             //showDialog(progress_bar_type);
             cancel = false;
-
+/*
             progressDialog = ProgressDialog.show(getActivity(),
                     "Processing Data",
                     "Please Wait!");
@@ -663,7 +663,7 @@ public class AeratorDailyGraphFragment extends Fragment {
                     cancel = true;
                 }
             });
-
+*/
             for (int i =0; i<MAX_AERATOR;i++) {
 
                 mSeries[i].resetData(DATA_POINT_NO_DATA);
@@ -757,7 +757,7 @@ public class AeratorDailyGraphFragment extends Fragment {
                 mPondControlStatusSeries[i].setTitle(mPondControlStatusXml[i].getIoName());
             }
 
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             unlockScreenOrientation();
         }
     }
