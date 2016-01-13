@@ -85,6 +85,11 @@ public class AeratorDailyGraphFragment extends Fragment {
     //private SensorDailyDataXML mDoLevelXml;
     //private SensorDailyDataXML mAvlAeratorXml;
 
+    private DataPoint[][] dataPointSeries1;
+    private DataPoint[][] dataPointSeries2;
+
+    private DataPoint DATA_POINT_NO_DATA[] = {new DataPoint(0,0) };
+
     int [] mStateColor = new int[] {
             Color.GRAY,
             Color.GRAY,
@@ -658,6 +663,18 @@ public class AeratorDailyGraphFragment extends Fragment {
                     cancel = true;
                 }
             });
+
+            for (int i =0; i<MAX_AERATOR;i++) {
+
+                mSeries[i].resetData(DATA_POINT_NO_DATA);
+
+            }
+            for (int i =0; i<PC_PARA_NUM;i++) {
+
+                mPondControlStatusSeries[i].resetData(DATA_POINT_NO_DATA);
+
+            }
+
             //lockScreenOrientation();
 
             //Toast.makeText(getActivity(),"Progress Start",Toast.LENGTH_LONG).show();
@@ -668,6 +685,43 @@ public class AeratorDailyGraphFragment extends Fragment {
         protected String doInBackground(String... str) {
             //updateSeriesData();
             //updateUpperGraphSeriesData();
+
+
+            dataPointSeries1 = new DataPoint[MAX_AERATOR][];
+            dataPointSeries2 = new DataPoint[PC_PARA_NUM][];
+            int record_count;
+
+            for(int i=0;i<MAX_AERATOR;i++) {
+
+                record_count = mAeratorXml[i].getCountRecord();
+
+                if (record_count > 0) {
+                    dataPointSeries1[i] = new DataPoint[record_count];
+
+                    for (int ii = 0; ii < record_count; ii++) {
+                        DataPoint v = new DataPoint(mAeratorXml[i].getDataTimeStamp(ii), mAeratorXml[i].getDataValue(ii)%10);
+                        dataPointSeries1[i][ii] = v;
+                    }
+
+                } else {
+                    dataPointSeries1[i] = new DataPoint[] {new DataPoint(0,0)};
+                }
+            }
+
+            for (int i =0; i<PC_PARA_NUM;i++) {
+                record_count = mPondControlStatusXml[i].getCountRecord();
+                dataPointSeries2[i] = new DataPoint[record_count];
+                for (int ii=0;ii<record_count;ii++) {
+                    DataPoint v = new DataPoint(mPondControlStatusXml[i].getDataTimeStamp(ii), mPondControlStatusXml[i].getDataValue(ii));
+                    dataPointSeries2[i][ii] = v;
+                }
+                if (record_count==0) {
+                    dataPointSeries2[i] = new DataPoint[]{new DataPoint(0, 0)};
+                }
+
+                mPondControlStatusSeries[i].setTitle(mPondControlStatusXml[i].getIoName());
+            }
+
             return null;
         }
 
@@ -685,11 +739,24 @@ public class AeratorDailyGraphFragment extends Fragment {
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
 
-            // Play the music
 
-            updateSeriesData();
+            //updateSeriesData();
+            //updatePondControlStatusGraphSeriesData();
             reformatPlotArea();
-            updatePondControlStatusGraphSeriesData();
+            reformatPondControlStatusPlotArea();
+            for (int i =0; i<MAX_AERATOR;i++) {
+
+                mSeries[i].resetData(dataPointSeries1[i]);
+
+                mSeries[i].setTitle(mAeratorXml[i].getIoName());
+            }
+            for (int i =0; i<PC_PARA_NUM;i++) {
+
+                mPondControlStatusSeries[i].resetData(dataPointSeries2[i]);
+
+                mPondControlStatusSeries[i].setTitle(mPondControlStatusXml[i].getIoName());
+            }
+
             progressDialog.dismiss();
             unlockScreenOrientation();
         }
