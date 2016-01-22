@@ -123,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
                     url2 = BaseURL[pos] + ",4096,1506";
                     sAvlMotorUrl = BaseURL[pos] + ",4096,1507";
 
+                    for (i = 1; i <= AERATOR_NUM; i++) {
+                        sMotorUrl[i] = BaseURL[pos];
+
+                    }
+
                     SelectedPond = pos;
 
                     if (pos == 0) {
@@ -148,6 +153,16 @@ public class MainActivity extends AppCompatActivity {
                         url2 = BaseURL[pos] + ",4096,1560";
                         for (i = 1; i < AERATOR_NUM; i++)
                             sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
+                    } else if (pos==6) {
+                        sMotorUrl[1] = BaseURL[pos] + ",4096,1520";
+                        sMotorUrl[3] = BaseURL[pos] + ",4096,1521";
+                        sMotorUrl[5] = BaseURL[pos] + ",4096,1522";
+                        sMotorUrl[7] = BaseURL[pos] + ",4096,1523";
+                        sMotorUrl[9] = BaseURL[pos] + ",4096,1524";
+                        sMotorUrl[10] = BaseURL[pos] + ",4096,1525";
+                        sMotorUrl[11] = BaseURL[pos] + ",4096,1526";
+                        sMotorUrl[12] = BaseURL[pos] + ",4096,1527";
+
                     } else {
                         //int ionumber = 1560;
                         int ionumber = 1520;
@@ -157,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
                             ionumber++;
                         }
                     }
+
+
 
                     updateView();
 
