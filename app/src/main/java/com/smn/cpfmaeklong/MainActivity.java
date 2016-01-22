@@ -149,13 +149,15 @@ public class MainActivity extends AppCompatActivity {
                         for (i = 1; i < AERATOR_NUM; i++)
                             sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
                     } else {
-                        int ionumber = 1560;
+                        //int ionumber = 1560;
+                        int ionumber = 1520;
 
                         for (i = 1; i <= AERATOR_NUM; i++) {
                             sMotorUrl[i] = BaseURL[pos] + ",4096," + String.valueOf(ionumber);
                             ionumber++;
                         }
                     }
+
                     updateView();
 
                 }

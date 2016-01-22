@@ -554,6 +554,7 @@ public class AeratorDailyGraphFragment extends Fragment {
                 } else {
                     io_number = 1560;
                 }
+                io_number=1520;
                 for (int i=0;i<MAX_AERATOR;i++) {
                     finalUrl = mBaseUrl + ",4096," + io_number + "," + date_str;
                     io_number++;
