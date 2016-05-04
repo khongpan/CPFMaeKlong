@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HandleXML {
+public class SyslogXML {
+    private String strName = " ";
+    private String strNote = " ";
     private String LastValue = "-";
     private String LastIODateTime = "-";
     private String[] Message =new String[10000];
@@ -16,8 +18,8 @@ public class HandleXML {
     private String urlString = null;
     private String[] ValueY = new String[300] ;
     private XmlPullParserFactory xmlFactoryObject;
-    public volatile boolean parsingComplete = true;
-    public HandleXML(String url){
+    public volatile boolean parsingComplete = false;
+    public SyslogXML(String url){
         this.urlString = url;
     }
     public String getLastValue(){
@@ -29,6 +31,13 @@ public class HandleXML {
     public int getCountRecord (){
         return countRecord;
     }
+    private int iRecordNum = 0;
+    private String strTemp;
+
+    public String getNote() {
+      return strNote;
+    }
+
     public String getValue(){
         index++;
         return ValueY[index];
@@ -50,12 +59,29 @@ public class HandleXML {
                 String name=myParser.getName();
                 switch (event) {
                     case XmlPullParser.START_TAG:
+                        if (name.equals("IO")) {
+                            strTemp = myParser.getAttributeValue(null, "Record");
+                            strTemp = strTemp+"";
+
+
+                        }
                         break;
                     case XmlPullParser.TEXT:
                         text = myParser.getText();
                         break;
                     case XmlPullParser.END_TAG:
                         switch (name) {
+                            case "Name":
+                               // String[] strResults = text.split("\\s");
+                                //if (strResults.length>=1)
+                                //    strName = new String(strResults[0]);
+                                //if (strResults.length>=2)
+                                //    strNote = new String(strResults[1]);
+                                strName = text;
+                                break;
+                            case "Detail":
+                                strNote = text;
+                                break;
                             case "LastValue":
                                 LastValue = text;
                                 break;
@@ -75,12 +101,13 @@ public class HandleXML {
                                 i++;
                                 countRecord++;
                                 break;
+
                         }
                         break;
                 }
                 event = myParser.next();
             }
-            parsingComplete = false;
+            parsingComplete = true;
         }
         catch (Exception e) {
             e.printStackTrace();

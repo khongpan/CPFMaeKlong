@@ -53,7 +53,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_alignBottom="@+id/btsch"
-        android:hint="enter search text here" />
+        android:hint="enter filter text here"
+        android:focusable="false" />
 
     <Button
         android:layout_width="50dp"
