@@ -412,10 +412,10 @@ public class MainActivity extends AppCompatActivity {
 
         String str_show;
 
-        if (SelectedPond==2) {
+        /*if (SelectedPond==2) {
             str_show = "Motor"+ mNo + " S" + state + " "
                     + strRelayState[relay_state];
-        } else {
+        } else*/ {
             str_show = "Motor"+ mNo + " S" + state + " "
                     + strRelayState[relay_state] + " "
                     + strRequireState[require_state] + " "
