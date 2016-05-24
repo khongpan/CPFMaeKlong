@@ -39,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
     String[] BaseURL = {"http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=JRD-19",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=PTN-01",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-1",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-2",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-3",
-                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-4",};
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-4",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-5",};
     SensorInfoXML xmlDoLevel, xmlOnMotorCount;
     SensorInfoXML[] xmlMotor=new SensorInfoXML[AERATOR_NUM+1];
     SensorInfoXML xmlUsableMotorCount;
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         url2 = BaseURL[pos] + ",4096,1560";
                         for (i = 1; i < AERATOR_NUM; i++)
                             sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
-                    } else if (pos==6) {
+                    } else if (pos==7) {
                         sMotorUrl[1] = BaseURL[pos] + ",4096,1520";
                         sMotorUrl[3] = BaseURL[pos] + ",4096,1521";
                         sMotorUrl[5] = BaseURL[pos] + ",4096,1522";
@@ -659,12 +661,12 @@ public class MainActivity extends AppCompatActivity {
 
 
             String str = mBtnDoLevel.getText().toString();
-            float f = Float.parseFloat(str);
-            if (f < 1) {
-                f = f * 20;
-            }
-            str = String.format("%.2f", f);
-            mBtnDoLevel.setText(str);
+            //float f = Float.parseFloat(str);
+            //if (f < 1) {
+            //    f = f * 20;
+            //}
+            //str = String.format("%.2f", f);
+            //mBtnDoLevel.setText(str);
 
             for (int i = 1; i <= AERATOR_NUM; i++) {
                 mAerator[i].setText(String.valueOf(i));

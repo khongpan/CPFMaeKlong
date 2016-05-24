@@ -68,11 +68,13 @@ public class DailyGraphFragment extends Fragment {
 
     private LineGraphSeries<DataPoint> mSeries1;
     private LineGraphSeries<DataPoint> mSeries2;
+    private LineGraphSeries<DataPoint> mSeries3;
     private GraphView mGraphView;
 
 
     private SensorDailyDataXML sensorXml1;
     private SensorDailyDataXML sensorXml2;
+    private SensorDailyDataXML sensorXml3;
 
 
 

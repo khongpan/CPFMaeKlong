@@ -5,10 +5,12 @@
         <item>CPF Pond 5</item>
         <item>CPF Pond 8</item>
         <item>JRD Pond 19</item>
+        <item>PTN Pond 1</item>
         <item>EST-Pond 1</item>
         <item>EST-Pond 2</item>
         <item>EST-Pond 3</item>
         <item>EST-Pond 4</item>
+        <item>EST-Pond 5</item>
     </string-array>
     <string name="title_activity_graph">DailyGraph</string>
     <string name="title_activity_grid">SysLog</string>
