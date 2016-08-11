@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "com.smn.cpfmaeklong"
         minSdkVersion 10
         targetSdkVersion 17
-        versionCode 11
-        versionName '0.11 beta 1'
+        versionCode 12
+        versionName '0.12'
     }
     buildTypes {
         release {

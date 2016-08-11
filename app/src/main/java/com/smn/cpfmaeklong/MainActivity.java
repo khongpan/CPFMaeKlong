@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -316,9 +318,9 @@ public class MainActivity extends AppCompatActivity {
     public void DisplayMotorStatus(){
 
         int relay_state;
-        int require_state;
-        int demand_state;
-        int force_state;
+        int decision_state;
+        int profile_state;
+        int mode_state;
 
         String str_value;
         int value;
@@ -326,42 +328,74 @@ public class MainActivity extends AppCompatActivity {
 
             str_value = xmlMotor[i].getLastValue();
 
+            if (!xmlMotor[i].getDetails().equals("no"))
+            {
+                mAerator[i].setText(xmlMotor[i].getDetails());
+            }
+            /*{
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+
+   ;
+                layoutParams.setMargins(i*10,i*10, 0, 0);
+                mAerator[i].setWidth(20);
+                mAerator[i].setHeight(20);
+                mAerator[i].setLayoutParams(layoutParams);
+                //text.setText("Result ");
+            }*/
+
+
+
             if(str_value.equals("-")){
                 mAerator[i].setBackgroundColor(Color.WHITE);
             }else {
                 value = (int) Float.parseFloat(str_value);
-                relay_state = value%10;
+                relay_state = value%100;
+                value/=100;
+                decision_state = value%10;
                 value/=10;
-                require_state = value%10;
+                profile_state = value%10;
                 value/=10;
-                demand_state = value%10;
-                value/=10;
-                force_state = value %10;
+                mode_state = value %10;
 
                 str_value = xmlMotor[i].getLastValue();
                 value = (int) Float.parseFloat(str_value);
-                relay_state = value%10;
+                relay_state = value%100;
+                value/=100;
+                decision_state = value%10;
                 value/=10;
-                require_state = value%10;
+                profile_state = value%10;
                 value/=10;
-                demand_state = value%10;
-                value/=10;
-                force_state = value %10;
-                if (relay_state == 3) {
+                mode_state = value %10;
+
+                mAerator[i].setTextColor(Color.WHITE);
+
+                if (relay_state == 3) { //relay on
                     mAerator[i].setBackgroundColor(Color.argb(255, 0, 192, 0));
-                    if (demand_state == 1) {
+                    if (profile_state == 1) {// profile MustOn
                         mAerator[i].setBackgroundColor(Color.argb(255, 0, 112, 0));
                     }
-                } else if (relay_state == 5) {
-                    if (demand_state == 2)
+                } else if (relay_state == 5) { //relay off
+                    if (profile_state == 2) // profile MustOff
                         mAerator[i].setBackgroundColor(Color.argb(64, 64, 64, 0));
                     else
                         mAerator[i].setBackgroundColor(Color.BLACK);
                 } else if (str_value.equals("-")) {
                     mAerator[i].setBackgroundColor(Color.WHITE);
-                } else {
-                    mAerator[i].setBackgroundColor(Color.RED);
+                } else if (relay_state == 10) { //relay manual on
+                    mAerator[i].setBackgroundColor(Color.argb(255,192,192,192));
+                    mAerator[i].setTextColor(Color.argb(255,0,192,0));
+                } else if (relay_state == 11) { // relay manual off
+                    mAerator[i].setBackgroundColor(Color.argb(255,192,192,192));
+                    mAerator[i].setTextColor(Color.BLACK);
+
+                }else {
+                        mAerator[i].setBackgroundColor(Color.RED);
+
                 }
+
+
             }
 
 
@@ -372,27 +406,27 @@ public class MainActivity extends AppCompatActivity {
     public void ShowMotorState(int mNo){
 
         int relay_state;
-        int require_state;
-        int demand_state;
-        int force_state;
+        int decision_state;
+        int profile_state;
+        int mode_state;
         int value;
         int state;
         String str_value;
 
         String[] strRelayState = {
             "Null","Unknow","Activate","On","Deactivate","Off",
-            "OverCurrent","UnderCurrent","InternalErr","CommError","LastState"
+            "OverCurrent","UnderCurrent","InternalErr","CommError","ManualOn","ManualOff","mOverCurrent","mUnderCurrent","mInternalError"
         };
 
-        String[] strRequireState = {
-                "ReqOff","ReqOn"
+        String[] strDecisionState = {
+                "On","Off","Defer"
         };
 
-        String[] strDemandState = {
-                "Free","MustOn","MustOff"
+        String[] strProfileState = {
+                "OnDemand","MustOn","MustOff"
         };
 
-        String[] strForceState = {
+        String[] strModeState = {
                 "Control","ForceOn","ForceOff","UnCare"
         };
 
@@ -404,13 +438,13 @@ public class MainActivity extends AppCompatActivity {
 
         value = (int) Float.parseFloat(str_value);
         state = value;
-        relay_state = value%10;
+        relay_state = value%100;
+        value/=100;
+        decision_state = value%10;
         value/=10;
-        require_state = value%10;
+        profile_state = value%10;
         value/=10;
-        demand_state = value%10;
-        value/=10;
-        force_state = value %10;
+        mode_state = value %10;
 
         String str_show;
 
@@ -418,11 +452,14 @@ public class MainActivity extends AppCompatActivity {
             str_show = "Motor"+ mNo + " S" + state + " "
                     + strRelayState[relay_state];
         } else*/ {
-            str_show = "Motor"+ mNo + " S" + state + " "
-                    + strRelayState[relay_state] + " "
-                    + strRequireState[require_state] + " "
-                    + strDemandState[demand_state] + " "
-                    + strForceState[force_state];
+            str_show = "Index"+ (mNo-1) + " S" + state + " "
+                    + strModeState[mode_state] + " "
+                    + strProfileState[profile_state] + " "
+                    + strDecisionState[decision_state] + " "
+                    + strRelayState[relay_state];
+
+
+
         }
 
 
