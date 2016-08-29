@@ -171,14 +171,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            mBtnUsableMotor.setOnClickListener(new View.OnClickListener() {
+            mBtnOnMotorCount.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     launchAeratorGraph(v);
                 }
 
+            });
+
+            mBtnUsableMotor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    launchGrid(v);
+                }
+
 
             });
+
+
 
 
             mAerator[1].setOnClickListener(new View.OnClickListener() {
@@ -471,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void LaunchGraph(View view) {
+    public void launchGraph(View view) {
         String message = BaseURL[SelectedPond];
         Intent intent = new Intent(this, DailyGraphActivity.class);
         intent.putExtra("BASE_URL", message);
@@ -480,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void LaunchGrid(View view) {
+    public void launchGrid(View view) {
         String message = BaseURL[SelectedPond];
         Intent intent = new Intent(this, SyslogActivity.class);
         intent.putExtra("BASE_URL", message);

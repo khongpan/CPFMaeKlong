@@ -44,6 +44,9 @@ public class SyslogActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
     HashMap<String, String> map;
 
+    String[] time ;
+    String[] data ;
+
 
 
     Date date = new Date();
@@ -184,8 +187,8 @@ public class SyslogActivity extends AppCompatActivity {
 
 
     void filterTextSet() {
-        final String[] time = new String[objs.getCountRecord()];
-        final String[] data = new String[objs.getCountRecord()];
+        //final String[] time = new String[objs.getCountRecord()];
+        //final String[] data = new String[objs.getCountRecord()];
         int[] index = new int[1];
 
         final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<>();
@@ -308,8 +311,10 @@ public class SyslogActivity extends AppCompatActivity {
             if (objs.getCountRecord() == 0) {
                 Toast.makeText(SyslogActivity.this, "No Data in Syslog.", Toast.LENGTH_LONG).show();
             } else {
-                final String[] time = new String[objs.getCountRecord()];
-                final String[] data = new String[objs.getCountRecord()];
+                //final String[] time = new String[objs.getCountRecord()];
+                //final String[] data = new String[objs.getCountRecord()];
+                time = new String[objs.getCountRecord()];
+                data = new String[objs.getCountRecord()];
 
                 for (int i = 0; i < objs.getCountRecord(); i++) {
                     time[i] = objs.NodeDateTime();
