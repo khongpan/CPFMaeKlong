@@ -18,7 +18,7 @@
 
         <com.jjoe64.graphview.GraphView
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="240dp"
             android:layout_alignParentLeft="false"
             android:layout_alignParentTop="false"
             android:layout_gravity="center"

@@ -54,7 +54,7 @@ public class AeratorDailyGraphFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private static final int MAX_AERATOR = 16;
+    private static final int MAX_AERATOR = 20;
     private static final int PC_PARA_NUM = 3;
 
     Date date = new Date();
@@ -101,7 +101,11 @@ public class AeratorDailyGraphFragment extends Fragment {
             Color.RED,
             Color.GRAY,
             Color.GRAY,
-            Color.GRAY
+            Color.YELLOW,
+            Color.BLUE,
+            Color.RED,
+            Color.RED,
+            Color.GRAY,
     };
 
 
@@ -216,7 +220,7 @@ public class AeratorDailyGraphFragment extends Fragment {
         // set manual Y bounds
         mGraphView.getViewport().setYAxisBoundsManual(true);
         mGraphView.getViewport().setMinY(0);
-        mGraphView.getViewport().setMaxY(16);
+        mGraphView.getViewport().setMaxY(20);
 
         mGraphView.getViewport().setScrollable(true);
 
@@ -224,7 +228,7 @@ public class AeratorDailyGraphFragment extends Fragment {
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
         //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        mGraphView.getGridLabelRenderer().setNumVerticalLabels(9);
+        mGraphView.getGridLabelRenderer().setNumVerticalLabels(11);
 
         // set manual x bounds to have nice steps
         SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -269,7 +273,7 @@ public class AeratorDailyGraphFragment extends Fragment {
         // set manual Y bounds
         mUpperGraphView.getViewport().setYAxisBoundsManual(true);
         mUpperGraphView.getViewport().setMinY(0);
-        mUpperGraphView.getViewport().setMaxY(16);
+        mUpperGraphView.getViewport().setMaxY(20);
 
         //mGraphView.getViewport().setScrollable(true);
 
@@ -277,7 +281,7 @@ public class AeratorDailyGraphFragment extends Fragment {
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
         //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", "","","","","20"});
         mUpperGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        mUpperGraphView.getGridLabelRenderer().setNumVerticalLabels(9);
+        mUpperGraphView.getGridLabelRenderer().setNumVerticalLabels(11);
 
         // set manual x bounds to have nice steps
         SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -700,7 +704,7 @@ public class AeratorDailyGraphFragment extends Fragment {
                     dataPointSeries1[i] = new DataPoint[record_count];
 
                     for (int ii = 0; ii < record_count; ii++) {
-                        DataPoint v = new DataPoint(mAeratorXml[i].getDataTimeStamp(ii), mAeratorXml[i].getDataValue(ii)%10);
+                        DataPoint v = new DataPoint(mAeratorXml[i].getDataTimeStamp(ii), mAeratorXml[i].getDataValue(ii)%100);
                         dataPointSeries1[i][ii] = v;
                     }
 

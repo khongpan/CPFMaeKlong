@@ -5,7 +5,7 @@ android {
     buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "com.smn.cpfmaeklong"
-        minSdkVersion 10
+        minSdkVersion 17
         targetSdkVersion 17
         versionCode 12
         versionName '0.12'

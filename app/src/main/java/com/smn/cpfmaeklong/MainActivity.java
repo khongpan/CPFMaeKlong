@@ -29,7 +29,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    final int AERATOR_NUM=16;
+    final int AERATOR_NUM=20;
     boolean mDownloadCancel;
     Button mBtnDoLevel, mBtnOnMotorCount, mBtnRefresh, mBtnUsableMotor;
     TextView tv;
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=JRD-19",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=PTN-01",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=MRN-01",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-1",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-2",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-3",
@@ -106,6 +107,10 @@ public class MainActivity extends AppCompatActivity {
         mAerator[14] = (TextView) findViewById(R.id.btM14);
         mAerator[15] = (TextView) findViewById(R.id.btM15);
         mAerator[16] = (TextView) findViewById(R.id.btM16);
+        mAerator[17] = (TextView) findViewById(R.id.btM17);
+        mAerator[18] = (TextView) findViewById(R.id.btM18);
+        mAerator[19] = (TextView) findViewById(R.id.btM19);
+        mAerator[20] = (TextView) findViewById(R.id.btM20);
 
         //ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         //NetworkInfo nInfo = cManager.getActiveNetworkInfo();
@@ -133,51 +138,12 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     SelectedPond = pos;
+                    int ionumber = 1520;
 
-                    if (pos == 0) {
-
-                        sMotorUrl[1] = BaseURL[pos] + ",4096,1520";
-                        sMotorUrl[2] = BaseURL[pos] + ",4096,1524";
-                        sMotorUrl[3] = BaseURL[pos] + ",4096,1521";
-                        sMotorUrl[4] = BaseURL[pos] + ",4096,1525";
-                        sMotorUrl[5] = BaseURL[pos] + ",4096,1522";
-                        sMotorUrl[6] = BaseURL[pos] + ",4096,1526";
-                        sMotorUrl[7] = BaseURL[pos] + ",4096,1523";
-                        sMotorUrl[8] = BaseURL[pos] + ",4096,1527";
-                        sMotorUrl[9] = BaseURL[pos] + ",4096,1528";
-                        sMotorUrl[10] = BaseURL[pos] + ",4096,1529";
-                        sMotorUrl[11] = BaseURL[pos] + ",4096,1530";
-                        sMotorUrl[12] = BaseURL[pos] + ",4096,1531";
-                        sMotorUrl[13] = BaseURL[pos] + ",4096,1532";
-                        sMotorUrl[14] = BaseURL[pos] + ",4096,1533";
-                        sMotorUrl[15] = BaseURL[pos] + ",4096,1534";
-                        sMotorUrl[16] = BaseURL[pos] + ",4096,1535";
-                    } else if (pos == 1) {
-                        url1 = BaseURL[pos] + ",8192,100";
-                        url2 = BaseURL[pos] + ",4096,1560";
-                        for (i = 1; i < AERATOR_NUM; i++)
-                            sMotorUrl[i] = BaseURL[pos] + ",4096,1560";
-                    } else if (pos==7) {
-                        sMotorUrl[1] = BaseURL[pos] + ",4096,1520";
-                        sMotorUrl[3] = BaseURL[pos] + ",4096,1521";
-                        sMotorUrl[5] = BaseURL[pos] + ",4096,1522";
-                        sMotorUrl[7] = BaseURL[pos] + ",4096,1523";
-                        sMotorUrl[9] = BaseURL[pos] + ",4096,1524";
-                        sMotorUrl[10] = BaseURL[pos] + ",4096,1525";
-                        sMotorUrl[11] = BaseURL[pos] + ",4096,1526";
-                        sMotorUrl[12] = BaseURL[pos] + ",4096,1527";
-
-                    } else {
-                        //int ionumber = 1560;
-                        int ionumber = 1520;
-
-                        for (i = 1; i <= AERATOR_NUM; i++) {
-                            sMotorUrl[i] = BaseURL[pos] + ",4096," + String.valueOf(ionumber);
-                            ionumber++;
-                        }
+                    for (i = 1; i <= AERATOR_NUM; i++) {
+                        sMotorUrl[i] = BaseURL[pos] + ",4096," + String.valueOf(ionumber);
+                        ionumber++;
                     }
-
-
 
                     updateView();
 
@@ -311,6 +277,30 @@ public class MainActivity extends AppCompatActivity {
                     ShowMotorState(16);
                 }
             });
+            mAerator[17].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(17);
+                }
+            });
+            mAerator[18].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(18);
+                }
+            });
+            mAerator[19].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(19);
+                }
+            });
+            mAerator[20].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ShowMotorState(20);
+                }
+            });
 
         }
     }
@@ -330,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (!xmlMotor[i].getDetails().equals("no"))
             {
-                mAerator[i].setText(xmlMotor[i].getDetails());
+                //mAerator[i].setText(xmlMotor[i].getDetails());
             }
             /*{
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -349,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(str_value.equals("-")){
                 mAerator[i].setBackgroundColor(Color.WHITE);
+                mAerator[i].setTextColor(Color.WHITE);
             }else {
                 value = (int) Float.parseFloat(str_value);
                 relay_state = value%100;
@@ -384,11 +375,14 @@ public class MainActivity extends AppCompatActivity {
                 } else if (str_value.equals("-")) {
                     mAerator[i].setBackgroundColor(Color.WHITE);
                 } else if (relay_state == 10) { //relay manual on
-                    mAerator[i].setBackgroundColor(Color.argb(255,192,192,192));
-                    mAerator[i].setTextColor(Color.argb(255,0,192,0));
+                    mAerator[i].setBackgroundColor(Color.YELLOW);
+                    //mAerator[i].setBackgroundColor(Color.argb(255,192,192,192));
+                    //mAerator[i].setTextColor(Color.argb(255,0,192,0));
                 } else if (relay_state == 11) { // relay manual off
-                    mAerator[i].setBackgroundColor(Color.argb(255,192,192,192));
-                    mAerator[i].setTextColor(Color.BLACK);
+                    mAerator[i].setBackgroundColor(Color.BLUE);
+                    //mAerator[i].setBackgroundColor(Color.argb(255,0,0,192));
+                    //mAerator[i].setBackgroundColor(Color.argb(255,192,192,192));
+                    //mAerator[i].setTextColor(Color.BLACK);
 
                 }else {
                         mAerator[i].setBackgroundColor(Color.RED);
@@ -415,7 +409,8 @@ public class MainActivity extends AppCompatActivity {
 
         String[] strRelayState = {
             "Null","Unknow","Activate","On","Deactivate","Off",
-            "OverCurrent","UnderCurrent","InternalErr","CommError","ManualOn","ManualOff","mOverCurrent","mUnderCurrent","mInternalError"
+            "OverCurrent","UnderCurrent","InternalErr","CommError",
+            "ManualOn","ManualOff","mOverCurrent","mUnderCurrent","mInternalError"
         };
 
         String[] strDecisionState = {
@@ -452,10 +447,10 @@ public class MainActivity extends AppCompatActivity {
             str_show = "Motor"+ mNo + " S" + state + " "
                     + strRelayState[relay_state];
         } else*/ {
-            str_show = "Index"+ (mNo-1) + " S" + state + " "
-                    + strModeState[mode_state] + " "
-                    + strProfileState[profile_state] + " "
-                    + strDecisionState[decision_state] + " "
+            str_show = "Index"+ (mNo-1) + " S" + state + " m"
+                    + strModeState[mode_state] + " p"
+                    + strProfileState[profile_state] + " d"
+                    + strDecisionState[decision_state] + " r"
                     + strRelayState[relay_state];
 
 
