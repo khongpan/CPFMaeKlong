@@ -62,7 +62,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="22sp"
             android:layout_marginTop="5dp"
-            android:onClick="LaunchGraph"/>
+            android:onClick="launchGraph"/>
 
         <TextView
             android:layout_width="wrap_content"
