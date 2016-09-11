@@ -379,7 +379,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else if (relay_state == 5) { //relay off
                     if (profile_state == 2) // profile MustOff
-                        mAerator[i].setBackgroundColor(Color.argb(64, 64, 64, 0));
+                        mAerator[i].setBackgroundColor(Color.argb(255, 204, 204, 204));
+                    else if (profile_state == 3) // profile Rest
+                        mAerator[i].setBackgroundColor(Color.argb(255, 64, 64, 128));
                     else
                         mAerator[i].setBackgroundColor(Color.BLACK);
                 } else if (str_value.equals("-")) {
@@ -428,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         String[] strProfileState = {
-                "OnDemand","MustOn","MustOff"
+                "OnDemand","MustOn","MustOff","Rest"
         };
 
         String[] strModeState = {
