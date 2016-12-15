@@ -81,6 +81,7 @@ public class GraphActivity extends AppCompatActivity {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
+        graphView.getGridLabelRenderer().setHumanRounding(false);
         staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 

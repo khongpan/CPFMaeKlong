@@ -8,8 +8,10 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
 import android.util.Log;
@@ -27,7 +29,8 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements PondLayoutFragment.OnFragmentInteractionListener{
 
     final int AERATOR_NUM=20;
     boolean mDownloadCancel;
@@ -41,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
     String[] BaseURL = {"http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=POND-CONTROL",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=JRD-19",
-                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=PTN-01",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=PTN-13",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=MRN-01",
+                        "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=PAN-01",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-1",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-2",
                         "http://203.185.131.92/ws/get.php?appkey=0c5a295bd8c07a080b450069e3f2&p=TEST-POND-CONTROL-3",
@@ -55,11 +59,43 @@ public class MainActivity extends AppCompatActivity {
     private String[] strPondsName;
     int SelectedPond;
 
+    PondLayoutFragment pondLayoutFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (findViewById(R.id.layoutPond) != null) {
+
+            // Create a new Fragment to be placed in the activity layout
+            //DailyGraphFragment dailyGraphFragment = new DailyGraphFragment();
+
+
+
+            pondLayoutFragment = new PondLayoutFragment();
+
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+
+
+            //pondLayoutFragment.setArguments(getIntent().getExtras());
+            Bundle arg= new Bundle();
+
+            arg.putString("BASE_URL",BaseURL[SelectedPond]);
+            arg.putInt("SELECTED_POND",SelectedPond);
+            arg.putString("GRAPH_GROUP", new String("AERATOR_STATUS"));
+
+
+            pondLayoutFragment.setArguments(arg);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.layoutPond, pondLayoutFragment).commit();
+        }
+
         StartApp();
     }
 
@@ -463,7 +499,9 @@ public class MainActivity extends AppCompatActivity {
                     + strModeState[mode_state] + " p"
                     + strProfileState[profile_state] + " d"
                     + strDecisionState[decision_state] + " r"
-                    + strRelayState[relay_state];
+                    + strRelayState[relay_state] + " x"
+                    + xmlMotor[mNo].getPosX() + " y"
+                    + xmlMotor[mNo].getPosY() + " ";
 
 
 
@@ -480,6 +518,12 @@ public class MainActivity extends AppCompatActivity {
 
             DownloadFromInternet downloader = new DownloadFromInternet();
             downloader.execute();
+            if ( pondLayoutFragment!= null) {
+                pondLayoutFragment.setPondUrl(BaseURL[SelectedPond]);
+                pondLayoutFragment.updateGraph();
+
+            }
+
         }
     }
 
@@ -724,6 +768,11 @@ public class MainActivity extends AppCompatActivity {
             unlockScreenOrientation();
 
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
 }

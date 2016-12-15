@@ -336,6 +336,10 @@ public class SyslogActivity extends AppCompatActivity {
                         new String[]{"DATE", "DATA"}, new int[]{R.id.date, R.id.data});
                 lv.setAdapter(sAdap);
 
+                //solved keyboard popup for search text
+                View current = getCurrentFocus();
+                if (current != null) current.clearFocus();
+
 
             }
             unlockScreenOrientation();

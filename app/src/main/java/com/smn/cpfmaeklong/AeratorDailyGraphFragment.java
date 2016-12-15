@@ -226,6 +226,7 @@ public class AeratorDailyGraphFragment extends Fragment {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mGraphView);
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
+        mGraphView.getGridLabelRenderer().setHumanRounding(false);
         //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", ""});
         mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         mGraphView.getGridLabelRenderer().setNumVerticalLabels(11);
@@ -279,6 +280,7 @@ public class AeratorDailyGraphFragment extends Fragment {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mUpperGraphView);
         staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
+        mUpperGraphView.getGridLabelRenderer().setHumanRounding(false);
         //staticLabelsFormatter.setVerticalLabels(new String[]{"", "", "", "", "", "5", "", "", "", "", "10", "", "", "", "", "15", "","","","","20"});
         mUpperGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         mUpperGraphView.getGridLabelRenderer().setNumVerticalLabels(11);

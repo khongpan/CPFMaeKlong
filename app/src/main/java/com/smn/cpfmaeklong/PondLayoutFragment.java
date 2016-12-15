@@ -1,13 +1,13 @@
 package com.smn.cpfmaeklong;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,28 +23,29 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link DailyGraphFragment.OnFragmentInteractionListener} interface
+ * {@link PondLayoutFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link DailyGraphFragment#newInstance} factory method to
+ * Use the {@link PondLayoutFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DailyGraphFragment extends Fragment {
+public class PondLayoutFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,6 +55,8 @@ public class DailyGraphFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private OnFragmentInteractionListener mListener;
+
     Date date = new Date();
     String mStrSelectedDay = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
@@ -60,26 +64,27 @@ public class DailyGraphFragment extends Fragment {
     private int mSelectedPond;
     private String mStrGraphGroup;
 
-    private OnFragmentInteractionListener mListener;
+
 
     private final Handler mHandler = new Handler();
-    private Runnable mTimer1;
-    private Runnable mTimer2;
+    //private Runnable mTimer1;
+    //private Runnable mTimer2;
 
-    private LineGraphSeries<DataPoint> mSeries1;
-    private LineGraphSeries<DataPoint> mSeries2;
-    private LineGraphSeries<DataPoint> mSeries3;
+    private PointsGraphSeries<DataPoint> mSeries1;
+
+    private final int AERATOR_NUM=20;
+    private PointsGraphSeries<DataPoint> mAeratorPos[] = new PointsGraphSeries[AERATOR_NUM];
+    private SensorInfoXML mAeratorInfoXml[]= new SensorInfoXML[AERATOR_NUM];
+
     private GraphView mGraphView;
-
+    private PointsGraphSeries.CustomShape mAeratorShape;
 
     private SensorDailyDataXML sensorXml1;
     private SensorDailyDataXML sensorXml2;
     private SensorDailyDataXML sensorXml3;
 
 
-
-
-    public DailyGraphFragment() {
+    public PondLayoutFragment() {
         // Required empty public constructor
     }
 
@@ -89,11 +94,11 @@ public class DailyGraphFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment DailyGraphFragment.
+     * @return A new instance of fragment PondLayoutFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static DailyGraphFragment newInstance(String param1, String param2) {
-        DailyGraphFragment fragment = new DailyGraphFragment();
+    public static PondLayoutFragment newInstance(String param1, String param2) {
+        PondLayoutFragment fragment = new PondLayoutFragment();
         Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, param1);
         //args.putString(ARG_PARAM2, param2);
@@ -118,9 +123,9 @@ public class DailyGraphFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_daily_graph, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_pond_layout, container, false);
 
-        mGraphView = (GraphView) rootView.findViewById(R.id.graph);
+        mGraphView = (GraphView) rootView.findViewById(R.id.pond_layout_graph);
 
         //setGraphFormat();
         //updateGraph();
@@ -178,155 +183,155 @@ public class DailyGraphFragment extends Fragment {
     }
 
     public void formatPlotArea() {
+
         //mGraphView.getLegendRenderer().setVisible(true);
         //mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
         //mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
+        //mGraphView.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
+
         mGraphView.getGridLabelRenderer().setGridColor(Color.DKGRAY);
 
         mGraphView.getViewport().setXAxisBoundsManual(true);
-        //mGraphView.getViewport().setMinX(0);
-        //mGraphView.getViewport().setMaxX(288);
+        mGraphView.getViewport().setMinX(0);
+        mGraphView.getViewport().setMaxX(100);
 
         // set manual Y bounds
         mGraphView.getViewport().setYAxisBoundsManual(true);
         mGraphView.getViewport().setMinY(0);
-        mGraphView.getViewport().setMaxY(16);
+        mGraphView.getViewport().setMaxY(100);
 
-        //mGraphView.getViewport().setScrollable(true);
+        mGraphView.getGridLabelRenderer().setNumVerticalLabels(0);
+        mGraphView.getGridLabelRenderer().setNumHorizontalLabels(0);
 
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(mGraphView);
 
 
-        staticLabelsFormatter.setHorizontalLabels(new String[]{"", "", "", "03", "", "", "06", "", "", "09", "", "", "12", "", "", "15", "", "", "18", "", "", "21", "", "", ""});
-        mGraphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        mGraphView.getGridLabelRenderer().setHumanRounding(false);
+        mGraphView.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+        mGraphView.getGridLabelRenderer().setVerticalLabelsVisible(false);
 
-        mGraphView.getGridLabelRenderer().setNumVerticalLabels(9);
-        //mGraphView.getGridLabelRenderer().setNumHorizontalLabels(2);
-/*
-        // set date label formatter
-        DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
-        mGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), df));
-        mGraphView.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-*/
 
-        // set manual x bounds to have nice steps
-        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date start_time = new Date();
-        Date end_time= new Date();
-        try {
-            start_time = date_formatter.parse(mStrSelectedDay);
-            end_time.setTime(start_time.getTime()+1000*60*60*24);
-        }    catch (Exception e)
+
+
+        for (int i=0;i<AERATOR_NUM;i++)
         {
-            e.printStackTrace();
+            mAeratorPos[i] = new PointsGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(-10,-10)});
+            mAeratorPos[i].setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    int i=0;
+
+                    for (i=0;i<AERATOR_NUM;i++) {
+                        if(series==mAeratorPos[i])  break;
+                    }
+
+                    ShowMotorState(i);
+
+                    //Toast.makeText(getActivity(), "On Data Point clicked: "+ i +series.getTitle()
+                    //       +dataPoint , Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            mAeratorShape = new PointsGraphSeries.CustomShape() {
+                @Override
+                public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
+
+
+                    DisplayMetrics displaymetrics = new DisplayMetrics();
+
+                    getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+                    float value = getResources().getDisplayMetrics().density;
+                    int dim = (int) (10*value);
+                    paint.setStrokeWidth(10);
+                    canvas.drawLine(x-dim, y-dim, x+dim, y+dim, paint);
+                    canvas.drawLine(x+dim, y-dim, x-dim, y+dim, paint);
+                }
+            };
+
+
+            mAeratorPos[i].setCustomShape(mAeratorShape);
+
+            mAeratorPos[i].setSize(24);
+            mGraphView.addSeries(mAeratorPos[i]);
         }
-
-        mGraphView.getViewport().setMinX(start_time.getTime());
-        mGraphView.getViewport().setMaxX(end_time.getTime());
-        mGraphView.getViewport().setXAxisBoundsManual(true);
-
-
-        mSeries1 = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
-        mSeries2 = new LineGraphSeries<DataPoint>(new DataPoint[] {new DataPoint(0,0), new DataPoint (0,0)});
-
-        mSeries1.setTitle("series 1");
-        mSeries1.setColor(Color.BLUE);
-        mSeries1.setThickness(2);
-
-        mSeries2.setTitle("series 2");
-        mSeries2.setColor(Color.RED);
-        mSeries2.setThickness(2);
-
-        mGraphView.addSeries(mSeries1);
-        mGraphView.addSeries(mSeries2);
     }
 
     public void updateSeriesData() {
-        {
+        int relay_state;
+        int decision_state;
+        int profile_state;
+        int mode_state;
 
-            DataPoint[] dataPoint;
-            int data_count=sensorXml1.getCountRecord();
+        String str_value;
+        int x,y;
+        int value;
+        for(int i=0;i<AERATOR_NUM;i++) {
 
-            if (data_count>0) {
-                dataPoint = new DataPoint[sensorXml1.getCountRecord()];
-                for (int i = 0; i < sensorXml1.getCountRecord(); i++) {
-                    DataPoint v = new DataPoint(sensorXml1.getDataTimeStamp(i), sensorXml1.getDataValue(i));
-                    dataPoint[i] = v;
+            mAeratorPos[i].setColor(Color.WHITE);
+            mAeratorPos[i].resetData(new DataPoint[] { new DataPoint(-10, -10)});
+            mAeratorPos[i].setTitle(mAeratorInfoXml[i].getIoName());
+
+
+            str_value = mAeratorInfoXml[i].getLastValue();
+
+            if(str_value.equals("-")){
+
+            }else {
+
+                value = (int) Float.parseFloat(str_value);
+                relay_state = value%100;
+                value/=100;
+                decision_state = value%10;
+                value/=10;
+                profile_state = value%10;
+                value/=10;
+                mode_state = value %10;
+
+                x=-10;y=-10;
+                str_value=mAeratorInfoXml[i].getPosX();
+                if(!str_value.equals("-"))
+                    x = (int )Float.parseFloat(str_value);
+                str_value=mAeratorInfoXml[i].getPosY();
+                if(!str_value.equals("-"))
+                    y = (int )Float.parseFloat(str_value);
+                DataPoint[] aeratorPos =  new DataPoint[] { new DataPoint(x, y)};
+                mAeratorPos[i].setColor(Color.WHITE);
+                mAeratorPos[i].resetData(aeratorPos);
+
+
+                if (relay_state == 3) { //relay on
+                    mAeratorPos[i].setColor(Color.argb(255, 0, 192, 0));
+                    if (profile_state == 1) {// profile MustOn
+                        mAeratorPos[i].setColor(Color.argb(255, 0, 112, 0));
+                    }
+                } else if (relay_state == 5) { //relay off
+                    if (profile_state == 2) // profile MustOff
+                        mAeratorPos[i].setColor(Color.argb(255, 204, 204, 204));
+                    else if (profile_state == 3) // profile Rest
+                        mAeratorPos[i].setColor(Color.argb(255, 64, 64, 128));
+                    else
+                        mAeratorPos[i].setColor(Color.BLACK);
+                } else if (str_value.equals("-")) {
+                    mAeratorPos[i].setColor(Color.WHITE);
+                } else if (relay_state == 10) { //relay manual on
+                    mAeratorPos[i].setColor(Color.YELLOW);
+                    mAeratorPos[i].setShape(PointsGraphSeries.Shape.POINT);
+
+                } else if (relay_state == 11) { // relay manual off
+                    mAeratorPos[i].setColor(Color.BLUE);
+                    mAeratorPos[i].setShape(PointsGraphSeries.Shape.TRIANGLE);
+                    mAeratorPos[i].setCustomShape(null);
+
+                }else {
+                    mAeratorPos[i].setColor(Color.RED);
+
                 }
-                if (dataPoint == null)
-                    dataPoint = new DataPoint[]{new DataPoint(0, 0), new DataPoint(0, 0)};
 
-            } else {
-                dataPoint = new DataPoint[] {new DataPoint(0,0)};
+
             }
-            mSeries1.resetData(dataPoint);
+
+
         }
-
-        {
-            DataPoint[] dataPoint;
-            int data_count=sensorXml2.getCountRecord();
-
-            if (data_count>0) {
-
-                dataPoint = new DataPoint[sensorXml2.getCountRecord()];
-
-
-                for (int i = 0; i < sensorXml2.getCountRecord(); i++) {
-                    DataPoint v = new DataPoint(sensorXml2.getDataTimeStamp(i), sensorXml2.getDataValue(i));
-                    dataPoint[i] = v;
-                }
-
-
-            } else {
-                dataPoint = new DataPoint[]{new DataPoint(0, 0), new DataPoint(0, 0)};
-            }
-            mSeries2.resetData(dataPoint);
-        }
-
-        mSeries1.setTitle(sensorXml1.getIoName());
-        mSeries2.setTitle(sensorXml2.getIoName());
-
-        //mGraphView.removeAllSeries();
-        //mGraphView.addSeries(mSeries1);
-        //mGraphView.addSeries(mSeries2);
-
-
-        mGraphView.getLegendRenderer().setVisible(true);
-        mGraphView.getLegendRenderer().setBackgroundColor(Color.WHITE);
-        mGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-
-/*
-        // set date label formatter
-        DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
-        mGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), df));
-        mGraphView.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-*/
-
-        // set manual x bounds to have nice steps
-        SimpleDateFormat  date_formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date start_time = new Date();
-        Date end_time= new Date();
-        try {
-            start_time = date_formatter.parse(mStrSelectedDay);
-            end_time.setTime(start_time.getTime()+1000*60*60*24+1);
-        }    catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        mGraphView.getViewport().setMinX(start_time.getTime());
-        mGraphView.getViewport().setMaxX(end_time.getTime());
-        mGraphView.getViewport().setXAxisBoundsManual(true);
-        //mGraphView.getViewport().setScalable(true);
-        //mGraphView.getViewport().setScrollable(true);
-
-
-
-
-
-
 
     }
 
@@ -334,8 +339,8 @@ public class DailyGraphFragment extends Fragment {
         mStrSelectedDay = date_str;
     }
 
-    void setGraphGroup(String group_str) {
-        mStrGraphGroup = group_str;
+    void setPondUrl(String str) {
+        mBaseUrl = str;
     }
 
     public boolean checkInternetConnection() {
@@ -353,7 +358,7 @@ public class DailyGraphFragment extends Fragment {
         return have_connection;
     }
 
-    void updateGraph() {
+    public void updateGraph() {
 
         if (checkInternetConnection()==false) return;
 
@@ -408,40 +413,35 @@ public class DailyGraphFragment extends Fragment {
             int count=1;
             try {
                 DataPoint[] dataPoint;
+                String finalUrl;
                 String finalUrl1,finalUrl2;
-                String io_number = str[0];
+                int io_number;
+                boolean loading_complete;
                 String date_str = str[1];
 
 
-                if (mStrGraphGroup.equals("DO_PROBE")) {
-                    finalUrl1 = mBaseUrl + ",4096," + "100" + "," + date_str;
-                    finalUrl2 = mBaseUrl + ",4096," + "101" + "," + date_str;
-                } else {
-                    finalUrl1 = mBaseUrl + ",4096," + "1505" + "," + date_str;
-                    finalUrl2 = mBaseUrl + ",4096," + "1506" + "," + date_str;
+                io_number=1520;
+
+
+                for(int i=0;i<AERATOR_NUM;i++) {
+                    finalUrl = mBaseUrl + ",4096," + io_number;
+                    mAeratorInfoXml[i] = new SensorInfoXML(finalUrl);
+                    mAeratorInfoXml[i].fetchXML();
+                    io_number++;
+
                 }
 
+                do {
+                    loading_complete=true;
+                    for(int i=0;i<AERATOR_NUM;i++) {
+                        loading_complete = loading_complete && mAeratorInfoXml[i].isFetchComplete();
+                    }
 
-                sensorXml1 = new SensorDailyDataXML(finalUrl1);
-                sensorXml1.fetchXML(finalUrl1);
-
-
-
-                sensorXml2 = new SensorDailyDataXML(finalUrl2);
-                sensorXml2.fetchXML(finalUrl2);
-
-                while (!sensorXml1.isFetchComplete()){
                     // Publish the progress which triggers onProgressUpdate method
-                    Thread.sleep(1000);
                     publishProgress("" + count++);
-
                     if (cancel) break;
-
-
-                }
-                while (!sensorXml2.isFetchComplete()) {
-                    if (cancel) break;
-                }
+                    if (!loading_complete) Thread.sleep(1000);
+                } while (!loading_complete);
 
 
 
@@ -465,7 +465,16 @@ public class DailyGraphFragment extends Fragment {
             // Dismiss the dialog after the Xml file was downloaded
             //Toast.makeText(getActivity(),"Progress Ended",Toast.LENGTH_LONG).show();
 
-            progressDialog.dismiss();
+            if (getActivity()==null) {
+                return;
+            }
+
+            if (progressDialog!=null) {
+                 if(progressDialog.isShowing())
+                     progressDialog.dismiss();
+            }
+
+            //progressDialog.dismiss();
             if (cancel) {
                 unlockScreenOrientation();
                 return;
@@ -507,5 +516,68 @@ public class DailyGraphFragment extends Fragment {
             }
         }
         return null;
+    }
+
+    public void ShowMotorState(int mNo){
+
+        int relay_state;
+        int decision_state;
+        int profile_state;
+        int mode_state;
+        int value;
+        int state;
+        String str_value;
+
+        String[] strRelayState = {
+                "Null","Unknow","Activate","On","Deactivate","Off",
+                "OverCurrent","UnderCurrent","InternalErr","CommError",
+                "ManualOn","ManualOff","mOverCurrent","mUnderCurrent","mInternalError"
+        };
+
+        String[] strDecisionState = {
+                "On","Off","Defer"
+        };
+
+        String[] strProfileState = {
+                "OnDemand","MustOn","MustOff","Rest"
+        };
+
+        String[] strModeState = {
+                "Control","ForceOn","ForceOff","UnCare"
+        };
+
+        if (mAeratorInfoXml[mNo]==null) return;
+
+        str_value = mAeratorInfoXml[mNo].getLastValue();
+
+        if (str_value.equals("-")) return;
+
+        value = (int) Float.parseFloat(str_value);
+        state = value;
+        relay_state = value%100;
+        value/=100;
+        decision_state = value%10;
+        value/=10;
+        profile_state = value%10;
+        value/=10;
+        mode_state = value %10;
+
+        String str_show;
+
+        /*if (SelectedPond==2) {
+            str_show = "Motor"+ mNo + " S" + state + " "
+                    + strRelayState[relay_state];
+        } else*/ {
+            str_show = "Index"+ mNo + " S" + state + " m"
+                    + strModeState[mode_state] + " p"
+                    + strProfileState[profile_state] + " d"
+                    + strDecisionState[decision_state] + " r"
+                    + strRelayState[relay_state] ;
+
+        }
+
+
+        Toast.makeText(getActivity() ,str_show,Toast.LENGTH_SHORT).show();
+
     }
 }

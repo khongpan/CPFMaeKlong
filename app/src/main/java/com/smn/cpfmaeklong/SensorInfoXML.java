@@ -19,6 +19,8 @@ public class SensorInfoXML {
     private String mStrIoDateTime="-";
     private String mStrLastValue="-";
     private String mStrDetails="-";
+    private String mStrPosX="-";
+    private String mStrPosY="-";
 
 
 
@@ -49,6 +51,10 @@ public class SensorInfoXML {
     public String getDetails() {
         return mStrDetails;
     }
+
+    public String getPosX() { return mStrPosX; }
+
+    public String getPosY() { return mStrPosY; }
 
 
     public void parseXML(XmlPullParser myParser) {
@@ -84,6 +90,11 @@ public class SensorInfoXML {
                             case "Detail":
                                 mStrDetails = text;
                                 break;
+                            case "xpos":
+                                mStrPosX = text;
+                                break;
+                            case "ypos":
+                                mStrPosY = text;
                         }
                         break;
                 }
